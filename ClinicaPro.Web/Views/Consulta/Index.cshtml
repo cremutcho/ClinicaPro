@@ -1,0 +1,40 @@
+@model IEnumerable<ClinicaPro.Core.Entities.Consulta>
+
+@{
+    ViewData["Title"] = "Consultas";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Nova Consulta</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.First().DataHora)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Status)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Paciente.Nome)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Medico.Nome)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Observacoes)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.DataHora.ToString("g")</td>
+            <td>@item.Status</td>
+            <td>@item.Paciente.Nome</td>
+            <td>@item.Medico.Nome</td>
+            <td>@item.Observacoes</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Editar</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalhes</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Excluir</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
