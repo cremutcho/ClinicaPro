@@ -1,0 +1,52 @@
+@model ClinicaPro.Core.Entities.Medico
+
+@{
+    ViewData["Title"] = "Editar Médico";
+}
+
+<h1 class="mt-4">Editar Médico</h1>
+
+<div class="card shadow-sm p-4 mt-3">
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Nome" class="form-label"></label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CRM" class="form-label"></label>
+            <input asp-for="CRM" class="form-control" />
+            <span asp-validation-for="CRM" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Especialidade</label>
+            <select asp-for="EspecialidadeId" class="form-select" asp-items="ViewBag.EspecialidadeId"></select>
+            <span asp-validation-for="EspecialidadeId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Telefone" class="form-label"></label>
+            <input asp-for="Telefone" class="form-control" />
+            <span asp-validation-for="Telefone" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

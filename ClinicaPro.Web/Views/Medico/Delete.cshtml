@@ -1,0 +1,34 @@
+@model ClinicaPro.Core.Entities.Medico
+
+@{
+    ViewData["Title"] = "Excluir Médico";
+}
+
+<h1 class="mt-4 text-danger">Excluir Médico</h1>
+
+<div class="card shadow-sm p-4 mt-3">
+    <h5>Tem certeza que deseja excluir este médico?</h5>
+
+    <dl class="row mt-3">
+        <dt class="col-sm-3">Nome</dt>
+        <dd class="col-sm-9">@Model.Nome</dd>
+
+        <dt class="col-sm-3">CRM</dt>
+        <dd class="col-sm-9">@Model.CRM</dd>
+
+        <dt class="col-sm-3">Especialidade</dt>
+        <dd class="col-sm-9">@Model.Especialidade?.Nome</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">Telefone</dt>
+        <dd class="col-sm-9">@Model.Telefone</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
