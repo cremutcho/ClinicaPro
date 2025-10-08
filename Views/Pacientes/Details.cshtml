@@ -1,0 +1,34 @@
+@model ClinicaPro.Core.Entities.Paciente
+
+@{
+    ViewData["Title"] = "Detalhes do Paciente";
+}
+
+<h1 class="mt-4">Detalhes do Paciente</h1>
+
+<div class="card shadow-sm mt-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Nome</dt>
+            <dd class="col-sm-9 mb-3">@Model.Nome</dd>
+
+            <dt class="col-sm-3">Data de Nascimento</dt>
+            <dd class="col-sm-9 mb-3">@Model.DataNascimento.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3">CPF</dt>
+            <dd class="col-sm-9 mb-3">@Model.CPF</dd>
+
+            <dt class="col-sm-3">Endereço</dt>
+            <dd class="col-sm-9 mb-3">@Model.Endereco</dd>
+
+            <dt class="col-sm-3">Telefone</dt>
+            <dd class="col-sm-9 mb-3">@Model.Telefone</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9 mb-3">@Model.Email</dd>
+        </dl>
+
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>

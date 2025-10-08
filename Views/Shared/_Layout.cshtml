@@ -1,0 +1,116 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ClinicaPro</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ClinicaPro.Web.styles.css" asp-append-version="true" />
+</head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    🏥 ClinicaPro
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">Privacidade</a>
+                        </li>
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            @* 🔹 Admin vê tudo *@
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Pacientes" asp-action="Index">Pacientes</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Medico" asp-action="Index">Médicos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Consulta" asp-action="Index">Consultas</a>
+                                </li>
+                            }
+                            @* 🔹 Médico vê apenas suas consultas *@
+                            else if (User.IsInRole("Medico"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Consulta" asp-action="Index">Minhas Consultas</a>
+                                </li>
+                            }
+                            @* 🔹 Recepcionista vê Pacientes e Consultas *@
+                            else if (User.IsInRole("Recepcionista"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Pacientes" asp-action="Index">Pacientes</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Consulta" asp-action="Index">Consultas</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item d-flex align-items-center text-white me-3">
+                                <span>👤 @UserManager.GetUserName(User)</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-light btn-sm">Sair</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Login">Entrar</a>
+                            </li>
+                            <li class="nav-item ms-2">
+                                <a class="btn btn-light btn-sm" asp-controller="Account" asp-action="Register">Registrar</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container flex-grow-1">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-white text-center text-muted py-3 border-top mt-auto">
+        <div class="container">
+            &copy; 2025 - <strong>ClinicaPro</strong> - 
+            <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Política de Privacidade</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
