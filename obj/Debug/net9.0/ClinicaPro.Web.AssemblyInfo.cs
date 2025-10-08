@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ClinicaPro.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d00e928ba530905d4796129277632152900bd26a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dc8aae7b1f60d9b67110dc42c075efa125e90228")]
 [assembly: System.Reflection.AssemblyProductAttribute("ClinicaPro.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ClinicaPro.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
