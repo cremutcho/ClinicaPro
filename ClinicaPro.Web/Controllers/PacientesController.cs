@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
-using ClinicaPro.Core.Services; // Caso IPacienteService esteja aqui
+using ClinicaPro.Core.Services;
+using Microsoft.AspNetCore.Authorization; // Caso IPacienteService esteja aqui
 
 namespace ClinicaPro.Web.Controllers
 {
+    [Authorize(Roles = "Admin,Recepcionista")]
     public class PacientesController : Controller
     {
         private readonly IPacienteService _pacienteService;
@@ -17,7 +19,7 @@ namespace ClinicaPro.Web.Controllers
         // GET: /Pacientes
         public async Task<IActionResult> Index()
         {
-            
+
             var pacientes = await _pacienteService.GetAllAsync();
             return View(pacientes);
         }

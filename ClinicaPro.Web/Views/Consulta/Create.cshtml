@@ -4,51 +4,58 @@
     ViewData["Title"] = "Nova Consulta";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="mb-4 fw-semibold text-primary">@ViewData["Title"]</h2>
 
-<!-- Mensagens de validação -->
-<div asp-validation-summary="All" class="text-danger mb-3"></div>
+<div class="card shadow-sm border-0 p-4">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
+    <form asp-action="Create" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
 
-    <div class="form-group mb-2">
-        <label asp-for="DataHora" class="control-label"></label>
-        <input asp-for="DataHora" type="datetime-local" class="form-control" />
-        <span asp-validation-for="DataHora" class="text-danger"></span>
-    </div>
+        <div class="col-md-6">
+            <label asp-for="DataHora" class="form-label fw-semibold"></label>
+            <input asp-for="DataHora" type="datetime-local" class="form-control" />
+            <span asp-validation-for="DataHora" class="text-danger"></span>
+        </div>
 
-    <div class="form-group mb-2">
-        <label asp-for="Status" class="control-label"></label>
-        <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<ClinicaPro.Core.Entities.StatusConsulta>()"></select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
+        <div class="col-md-6">
+            <label asp-for="Status" class="form-label fw-semibold"></label>
+            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ClinicaPro.Core.Entities.StatusConsulta>()"></select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
 
-    <div class="form-group mb-2">
-        <label asp-for="PacienteId" class="control-label"></label>
-        <select asp-for="PacienteId" class="form-control" asp-items="ViewBag.PacienteId">
-            <option value="">-- Selecione o paciente --</option>
-        </select>
-        <span asp-validation-for="PacienteId" class="text-danger"></span>
-    </div>
+        <div class="col-md-6">
+            <label asp-for="PacienteId" class="form-label fw-semibold"></label>
+            <select asp-for="PacienteId" class="form-select" asp-items="ViewBag.PacienteId">
+                <option value="">-- Selecione o paciente --</option>
+            </select>
+            <span asp-validation-for="PacienteId" class="text-danger"></span>
+        </div>
 
-    <div class="form-group mb-2">
-        <label asp-for="MedicoId" class="control-label"></label>
-        <select asp-for="MedicoId" class="form-control" asp-items="ViewBag.MedicoId">
-            <option value="">-- Selecione o médico --</option>
-        </select>
-        <span asp-validation-for="MedicoId" class="text-danger"></span>
-    </div>
+        <div class="col-md-6">
+            <label asp-for="MedicoId" class="form-label fw-semibold"></label>
+            <select asp-for="MedicoId" class="form-select" asp-items="ViewBag.MedicoId">
+                <option value="">-- Selecione o médico --</option>
+            </select>
+            <span asp-validation-for="MedicoId" class="text-danger"></span>
+        </div>
 
-    <div class="form-group mb-2">
-        <label asp-for="Observacoes" class="control-label"></label>
-        <textarea asp-for="Observacoes" class="form-control"></textarea>
-        <span asp-validation-for="Observacoes" class="text-danger"></span>
-    </div>
+        <div class="col-12">
+            <label asp-for="Observacoes" class="form-label fw-semibold"></label>
+            <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Observacoes" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn btn-success mt-2">Salvar</button>
-    <a asp-action="Index" class="btn btn-secondary mt-2">Voltar</a>
-</form>
+        <div class="col-12 d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-success px-4">
+                💾 Salvar
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                ⬅️ Voltar
+            </a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

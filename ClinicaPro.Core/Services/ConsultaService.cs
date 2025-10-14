@@ -15,17 +15,18 @@ namespace ClinicaPro.Core.Services
             _consultaRepository = consultaRepository;
         }
 
-        // Métodos específicos de Consulta
+        // Retorna todas as consultas de um paciente
         public async Task<IEnumerable<Consulta>> GetByPacienteIdAsync(int pacienteId)
         {
-            var all = await _consultaRepository.GetAllAsync();
-            return all.Where(c => c.PacienteId == pacienteId);
+            var todas = await _consultaRepository.GetAllAsync();
+            return todas.Where(c => c.PacienteId == pacienteId);
         }
 
+        // Retorna todas as consultas de um médico
         public async Task<IEnumerable<Consulta>> GetByMedicoIdAsync(int medicoId)
         {
-            var all = await _consultaRepository.GetAllAsync();
-            return all.Where(c => c.MedicoId == medicoId);
+            var todas = await _consultaRepository.GetAllAsync();
+            return todas.Where(c => c.MedicoId == medicoId);
         }
     }
 }

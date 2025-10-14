@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClinicaPro.Core.Entities;
 using ClinicaPro.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClinicaPro.Web.Controllers
 {
+    [Authorize(Roles = "Admin,Medico")]
     public class MedicoController : Controller
     {
         private readonly ClinicaDbContext _context;

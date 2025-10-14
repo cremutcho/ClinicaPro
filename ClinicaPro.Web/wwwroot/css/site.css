@@ -1,31 +1,90 @@
-html {
-  font-size: 14px;
+/* ========================================= */
+/* 🔹 Layout do Dashboard (Novo) 🔹 */
+/* ========================================= */
+/* Define o container principal da página para melhor espaçamento e centralização */
+.dashboard-container {
+    padding-top: 3rem; /* Espaço maior do topo */
+    padding-bottom: 3rem;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* Garante que o container de cards use a largura máxima e centraliza seus itens */
+.dashboard-cards-row {
+    display: flex;
+    justify-content: center; /* Centraliza os cards horizontalmente */
+    gap: 20px; /* Espaçamento entre os cards (melhor que margem) */
+    flex-wrap: wrap; /* Garante que os cards quebrem a linha em telas menores */
+    margin: 0; /* Remove margens laterais padrão */
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* Garante que o container de coluna de cada card ocupe o espaço necessário */
+.dashboard-card-col {
+    /* Em vez de usar classes como col-md-3, você pode forçar um tamanho específico 
+       se não quiser usar o grid padrão do Bootstrap */
+    max-width: 250px; 
+    flex-basis: 250px;
+    margin: 10px; /* Adiciona um pequeno espaçamento uniforme */
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* ========================================= */
+/* 🔹 Padronização de títulos das páginas (Modificado) 🔹 */
+/* ========================================= */
+.page-title {
+    font-size: 2.5rem; /* Título maior */
+    font-weight: 700;
+    color: #1a1a1a; /* Cor mais escura para contraste */
+    text-align: left;
+    margin-top: 5rem; /* Mais distância do header (Você quer descer o título!) */
+    margin-bottom: 0.5rem; /* Menos espaço para o subtítulo vir logo abaixo */
+    letter-spacing: -0.5px;
 }
 
-body {
-  margin-bottom: 60px;
+.page-subtitle {
+    font-size: 1.2rem;
+    color: #555555;
+    text-align: left;
+    margin-top: 0; /* Espaço eliminado para ficar mais perto do título */
+    margin-bottom: 3rem; /* Aumenta o espaço após o subtítulo e antes dos cards */
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* ========================================= */
+/* 🔹 Estilo de cartões do Dashboard (Modificado) 🔹 */
+/* ========================================= */
+.card {
+    /* Sua regra original: */
+    border-radius: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    /* Modificado: Remove as margens de topo e fundo que interferem na centralização */
+    margin-top: 0; 
+    margin-bottom: 0; 
+    
+    padding: 1.5rem 1rem; /* Conteúdo mais espaçado */
+    height: 100%; /* Garante que todos os cards tenham a mesma altura (útil em grid) */
+    text-align: center; /* Centraliza o conteúdo dentro do card */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra mais sutil */
+    border: none; /* Remove a borda padrão do Bootstrap */
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada no hover */
+}
+
+.card-icon {
+    font-size: 2.5rem; /* Ícones maiores */
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.card-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0d6efd; /* Cor primária */
 }

@@ -4,49 +4,57 @@
     ViewData["Title"] = "Novo Médico";
 }
 
-<h1 class="mt-4">Cadastrar Novo Médico</h1>
+<h1 class="mt-4 text-center text-primary fw-bold">Cadastrar Novo Médico</h1>
 
-<div class="card shadow-sm p-4 mt-3">
-    <form asp-action="Create">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="card shadow-lg border-0 rounded-4 mt-4 mx-auto" style="max-width: 650px;">
+    <div class="card-body p-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-        <div class="mb-3">
-            <label asp-for="Nome" class="form-label"></label>
-            <input asp-for="Nome" class="form-control" />
-            <span asp-validation-for="Nome" class="text-danger"></span>
-        </div>
+            <div class="mb-3">
+                <label asp-for="Nome" class="form-label fw-semibold"></label>
+                <input asp-for="Nome" class="form-control form-control-lg" placeholder="Digite o nome completo do médico" />
+                <span asp-validation-for="Nome" class="text-danger small"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="CRM" class="form-label"></label>
-            <input asp-for="CRM" class="form-control" />
-            <span asp-validation-for="CRM" class="text-danger"></span>
-        </div>
+            <div class="mb-3">
+                <label asp-for="CRM" class="form-label fw-semibold"></label>
+                <input asp-for="CRM" class="form-control form-control-lg" placeholder="Ex: 123456-SP" />
+                <span asp-validation-for="CRM" class="text-danger small"></span>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Especialidade</label>
-            <select asp-for="EspecialidadeId" class="form-select" asp-items="ViewBag.EspecialidadeId">
-                <option value="">Selecione...</option>
-            </select>
-            <span asp-validation-for="EspecialidadeId" class="text-danger"></span>
-        </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Especialidade</label>
+                <select asp-for="EspecialidadeId" class="form-select form-select-lg" asp-items="ViewBag.EspecialidadeId">
+                    <option value="">Selecione...</option>
+                </select>
+                <span asp-validation-for="EspecialidadeId" class="text-danger small"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <input asp-for="Email" type="email" class="form-control form-control-lg" placeholder="email@exemplo.com" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="Telefone" class="form-label"></label>
-            <input asp-for="Telefone" class="form-control" />
-            <span asp-validation-for="Telefone" class="text-danger"></span>
-        </div>
+            <div class="mb-4">
+                <label asp-for="Telefone" class="form-label fw-semibold"></label>
+                <input asp-for="Telefone" class="form-control form-control-lg" placeholder="(XX) XXXXX-XXXX" />
+                <span asp-validation-for="Telefone" class="text-danger small"></span>
+            </div>
 
-        <button type="submit" class="btn btn-success">Salvar</button>
-        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-    </form>
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="bi bi-arrow-left-circle me-1"></i> Voltar
+                </a>
+                <button type="submit" class="btn btn-success btn-lg px-4">
+                    <i class="bi bi-check-circle me-1"></i> Salvar
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

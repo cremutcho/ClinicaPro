@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ClinicaPro.Core.Entities;
 
 namespace ClinicaPro.Infrastructure.Data
 {
-    public class ClinicaDbContext : DbContext
+    // Agora herda de IdentityDbContext para suportar autenticação e roles
+    public class ClinicaDbContext : IdentityDbContext<IdentityUser>
     {
         public ClinicaDbContext(DbContextOptions<ClinicaDbContext> options) : base(options)
         {

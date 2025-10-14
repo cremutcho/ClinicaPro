@@ -1,0 +1,17 @@
+# Build e cache
+bin/
+obj/
+.vs/
+*.user
+*.db
+*.log
+
+# Configurações sensíveis
+appsettings.json
+appsettings.*.json
+
+# Outros
+*.DS_Store
+*.suo
+*.swp
+*.tmp
