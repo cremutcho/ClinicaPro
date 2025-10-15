@@ -4,6 +4,8 @@ using ClinicaPro.Infrastructure.Data;
 using ClinicaPro.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MediatR; 
+using ClinicaPro.Core.Entities; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +24,20 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 // 🔹 Injeção de dependência dos repositórios genéricos
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-// 🔹 Injeção de dependência dos serviços via interfaces
+// 🔹 Injeção de dependência dos repositórios específicos
+// NOVO: Registro do Repositório específico para o Handler do MediatR
+builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
+
+// 🔹 Injeção de dependência dos serviços via interfaces (Serão removidos com a refatoração completa)
 builder.Services.AddScoped<IPacienteService, PacienteService>();
 builder.Services.AddScoped<IMedicoService, MedicoService>();
 builder.Services.AddScoped<IConsultaService, ConsultaService>();
+
+// 🔹 MediatR (CQRS)
+builder.Services.AddMediatR(cfg => 
+{
+    cfg.RegisterServicesFromAssembly(typeof(Medico).Assembly);
+});
 
 // 🔹 Adiciona suporte a controllers e views (MVC)
 builder.Services.AddControllersWithViews();
