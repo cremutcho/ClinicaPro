@@ -4,14 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using MediatR; // NOVO: Adicionado para usar o IMediator
+using MediatR; // Adicionado para usar o IMediator
 
-// NOVO: Adicione o using para a Query que criamos
+// Usings para Queries e Commands
 using ClinicaPro.Core.Features.Medicos.Queries; 
+using ClinicaPro.Core.Features.Medicos.Commands; // NOVO: Adicionado para usar o Command de Criação
 
 // AVISO: A injeção direta de DbContext abaixo será removida completamente 
 // em refatorações futuras, mas mantida por enquanto para que os outros 
-// métodos (Details, Create, Edit, Delete) continuem funcionando.
+// métodos (Details, Create (GET), Edit, Delete) continuem funcionando.
 using ClinicaPro.Core.Entities;
 using ClinicaPro.Infrastructure.Data;
 
@@ -21,28 +22,23 @@ namespace ClinicaPro.Web.Controllers
     [Authorize(Roles = "Admin,Medico")]
     public class MedicoController : Controller
     {
-        // REMOÇÃO: A injeção de ClinicaDbContext é uma má prática de arquitetura (violando Clean Arch)
-        // Por enquanto, a mantemos para que os métodos POST e Edit funcionem.
+        // O _context é mantido temporariamente para os métodos não refatorados (GET, Edit, Delete).
         private readonly ClinicaDbContext _context; 
 
-        // NOVO: Adicione o IMediator
+        // O IMediator está pronto para ser usado.
         private readonly IMediator _mediator; 
 
         public MedicoController(ClinicaDbContext context, IMediator mediator) // Construtor atualizado
         {
             _context = context;
-            _mediator = mediator; // O IMediator está pronto para ser usado
+            _mediator = mediator; 
         }
 
-        // GET: Medico (Método Refatorado com MediatR)
+        // GET: Medico (Refatorado com MediatR/Query)
         public async Task<IActionResult> Index()
         {
-            // O Contoller agora CRIA a Query (a requisição)
             var query = new ObterTodosMedicosQuery();
-            
-            // E envia a Query pelo Mediator. O Core/Handler faz o trabalho real.
             var medicos = await _mediator.Send(query); 
-            
             return View(medicos);
         }
 
@@ -67,27 +63,32 @@ namespace ClinicaPro.Web.Controllers
         }
 
         // GET: Medico/Create (Acesso direto ao DbContext mantido temporariamente)
+        // OBS: Idealmente, este método deveria retornar View(new CriarMedicoCommand())
         public IActionResult Create()
         {
             ViewBag.EspecialidadeId = new SelectList(_context.Especialidades.ToList(), "Id", "Nome");
             return View();
         }
 
-        // POST: Medico/Create (Acesso direto ao DbContext mantido temporariamente)
-        // ESTE É O PRÓXIMO ALVO DE REFATORAÇÃO (usando Commands)
+        // POST: Medico/Create - REFATORADO PARA COMMAND
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,CRM,EspecialidadeId,Email,Telefone")] Medico medico)
+        // Recebe o DTO CriarMedicoCommand em vez da entidade Medico
+        public async Task<IActionResult> Create(CriarMedicoCommand command) 
         {
             if (ModelState.IsValid)
             {
-                _context.Add(medico);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // Envia o Command para o Handler via Mediator
+                int novoMedicoId = await _mediator.Send(command);
+                
+                // Redireciona para a listagem (ou Details do novo item, se quisermos)
+                return RedirectToAction(nameof(Index)); 
             }
 
-            ViewBag.EspecialidadeId = new SelectList(_context.Especialidades, "Id", "Nome", medico.EspecialidadeId);
-            return View(medico);
+            // Se houver erro de validação, recarrega a lista de especialidades
+            // Este uso do _context será refatorado em breve (com outra Query/Command)
+            ViewBag.EspecialidadeId = new SelectList(_context.Especialidades, "Id", "Nome", command.EspecialidadeId);
+            return View(command); // Passa o Command de volta para a View para preservar os dados
         }
 
         // GET: Medico/Edit/5 (Acesso direto ao DbContext mantido temporariamente)
