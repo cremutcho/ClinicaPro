@@ -4,106 +4,91 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using MediatR; // Adicionado para usar o IMediator
+using MediatR; 
+using System.Collections.Generic; // Para KeyNotFoundException
 
 // Usings para Queries e Commands
 using ClinicaPro.Core.Features.Medicos.Queries; 
-using ClinicaPro.Core.Features.Medicos.Commands; // NOVO: Adicionado para usar o Command de Criação
-
-// AVISO: A injeção direta de DbContext abaixo será removida completamente 
-// em refatorações futuras, mas mantida por enquanto para que os outros 
-// métodos (Details, Create (GET), Edit, Delete) continuem funcionando.
+using ClinicaPro.Core.Features.Medicos.Commands;
+using ClinicaPro.Core.Features.Especialidades.Queries; // NOVO: Para o Dropdown
 using ClinicaPro.Core.Entities;
-using ClinicaPro.Infrastructure.Data;
 
+// REMOVIDOS OS USINGS DE INFRAESTRUTURA:
+// using ClinicaPro.Infrastructure.Data; 
 
 namespace ClinicaPro.Web.Controllers
 {
     [Authorize(Roles = "Admin,Medico")]
     public class MedicoController : Controller
     {
-        // O _context é mantido temporariamente para os métodos não refatorados (GET, Edit, Delete).
-        private readonly ClinicaDbContext _context; 
-
-        // O IMediator está pronto para ser usado.
+        // REMOVIDO: private readonly ClinicaDbContext _context; 
         private readonly IMediator _mediator; 
 
-        public MedicoController(ClinicaDbContext context, IMediator mediator) // Construtor atualizado
+        // Construtor Limpo: Recebe APENAS o IMediator
+        public MedicoController(IMediator mediator)
         {
-            _context = context;
             _mediator = mediator; 
         }
 
         // GET: Medico (Refatorado com MediatR/Query)
         public async Task<IActionResult> Index()
         {
-            var query = new ObterTodosMedicosQuery();
-            var medicos = await _mediator.Send(query); 
+            var medicos = await _mediator.Send(new ObterTodosMedicosQuery()); 
             return View(medicos);
         }
 
-        // ✅ GET: Medico/Details/5 (Acesso direto ao DbContext mantido temporariamente)
+        // ✅ GET: Medico/Details/5 - REFATORADO
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var medico = await _context.Medicos
-                .Include(m => m.Especialidade)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id.Value));
 
-            if (medico == null)
-            {
-                return NotFound();
-            }
+            if (medico == null) return NotFound();
 
             return View(medico);
         }
 
-        // GET: Medico/Create (Acesso direto ao DbContext mantido temporariamente)
-        // OBS: Idealmente, este método deveria retornar View(new CriarMedicoCommand())
-        public IActionResult Create()
+        // ✅ GET: Medico/Create - REFATORADO PARA USAR QUERY DE ESPECIALIDADES
+        public async Task<IActionResult> Create()
         {
-            ViewBag.EspecialidadeId = new SelectList(_context.Especialidades.ToList(), "Id", "Nome");
+            var especialidades = await _mediator.Send(new ObterTodasEspecialidadesQuery());
+            ViewBag.EspecialidadeId = new SelectList(especialidades, "Id", "Nome");
             return View();
         }
 
-        // POST: Medico/Create - REFATORADO PARA COMMAND
+        // ✅ POST: Medico/Create - REFATORADO (Lógica de erro também usa Query)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // Recebe o DTO CriarMedicoCommand em vez da entidade Medico
         public async Task<IActionResult> Create(CriarMedicoCommand command) 
         {
             if (ModelState.IsValid)
             {
-                // Envia o Command para o Handler via Mediator
-                int novoMedicoId = await _mediator.Send(command);
-                
-                // Redireciona para a listagem (ou Details do novo item, se quisermos)
+                await _mediator.Send(command);
                 return RedirectToAction(nameof(Index)); 
             }
 
-            // Se houver erro de validação, recarrega a lista de especialidades
-            // Este uso do _context será refatorado em breve (com outra Query/Command)
-            ViewBag.EspecialidadeId = new SelectList(_context.Especialidades, "Id", "Nome", command.EspecialidadeId);
-            return View(command); // Passa o Command de volta para a View para preservar os dados
+            // Lógica de erro refatorada para usar MediatR
+            var especialidades = await _mediator.Send(new ObterTodasEspecialidadesQuery());
+            ViewBag.EspecialidadeId = new SelectList(especialidades, "Id", "Nome", command.EspecialidadeId);
+            return View(command);
         }
 
-        // GET: Medico/Edit/5 (Acesso direto ao DbContext mantido temporariamente)
+        // ✅ GET: Medico/Edit/5 - REFATORADO (Busca do médico e Dropdown usam Query)
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
-            var medico = await _context.Medicos.FindAsync(id);
+            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id.Value));
             if (medico == null) return NotFound();
 
-            ViewBag.EspecialidadeId = new SelectList(_context.Especialidades.ToList(), "Id", "Nome", medico.EspecialidadeId);
+            // Usa MediatR para carregar o Dropdown
+            var especialidades = await _mediator.Send(new ObterTodasEspecialidadesQuery());
+            ViewBag.EspecialidadeId = new SelectList(especialidades, "Id", "Nome", medico.EspecialidadeId);
             return View(medico);
         }
 
-        // POST: Medico/Edit/5 (Acesso direto ao DbContext mantido temporariamente)
+        // ✅ POST: Medico/Edit/5 - REFATORADO (Lógica de erro e Concorrência usam Query/Command)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,CRM,EspecialidadeId,Email,Telefone")] Medico medico)
@@ -114,52 +99,57 @@ namespace ClinicaPro.Web.Controllers
             {
                 try
                 {
-                    _context.Update(medico);
-                    await _context.SaveChangesAsync();
+                    var command = new UpdateMedicoCommand
+                    {
+                        Id = medico.Id,
+                        Nome = medico.Nome,
+                        CRM = medico.CRM,
+                        EspecialidadeId = medico.EspecialidadeId,
+                        Email = medico.Email,
+                        Telefone = medico.Telefone
+                    };
+                    await _mediator.Send(command);
+                }
+                catch (KeyNotFoundException)
+                {
+                    return NotFound();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MedicoExists(medico.Id)) return NotFound();
+                    // VERIFICAÇÃO DE EXISTÊNCIA REFATORADA PARA USAR QUERY
+                    var existe = await _mediator.Send(new MedicoExisteQuery(medico.Id));
+                    if (!existe) return NotFound();
                     else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.EspecialidadeId = new SelectList(_context.Especialidades.ToList(), "Id", "Nome", medico.EspecialidadeId);
+            // Lógica de erro refatorada para usar MediatR
+            var especialidades = await _mediator.Send(new ObterTodasEspecialidadesQuery());
+            ViewBag.EspecialidadeId = new SelectList(especialidades, "Id", "Nome", medico.EspecialidadeId);
             return View(medico);
         }
 
-        // GET: Medico/Delete/5 (Acesso direto ao DbContext mantido temporariamente)
+        // ✅ GET: Medico/Delete/5 - REFATORADO
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
 
-            var medico = await _context.Medicos
-                .Include(m => m.Especialidade)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id.Value));
             if (medico == null) return NotFound();
 
             return View(medico);
         }
 
-        // POST: Medico/Delete/5 (Acesso direto ao DbContext mantido temporariamente)
+        // ✅ POST: Medico/Delete/5 - REFATORADO
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var medico = await _context.Medicos.FindAsync(id);
-            if (medico != null)
-                _context.Medicos.Remove(medico);
-
-            await _context.SaveChangesAsync();
+            await _mediator.Send(new DeleteMedicoCommand(id));
             return RedirectToAction(nameof(Index));
         }
-
-        // Função auxiliar que ainda usa o DbContext
-        private bool MedicoExists(int id)
-        {
-            return _context.Medicos.Any(e => e.Id == id);
-        }
+        
+        // REMOVIDO: private bool MedicoExists(int id) { ... }
     }
 }

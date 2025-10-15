@@ -4,10 +4,15 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems> 
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="13.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="**\*.cs" Exclude="obj\**;bin\**" /> 
   </ItemGroup>
 
 </Project>

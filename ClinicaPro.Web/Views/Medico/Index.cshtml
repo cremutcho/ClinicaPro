@@ -31,7 +31,11 @@
                     <tr>
                         <td>@Html.DisplayFor(modelItem => item.Nome)</td>
                         <td>@Html.DisplayFor(modelItem => item.CRM)</td>
-                        <td>@item.Especialidade?.Nome</td>
+                        
+                        @* CORREÇÃO APLICADA AQUI: Usando o DisplayFor para garantir a renderização correta.
+                           Se o item.Especialidade for NULO (embora não devesse ser), mostrará "Nenhuma". *@
+                        <td>@(item.Especialidade?.Nome ?? "Nenhuma")</td>
+                        
                         <td>@Html.DisplayFor(modelItem => item.Email)</td>
                         <td>@Html.DisplayFor(modelItem => item.Telefone)</td>
                         <td class="text-center">

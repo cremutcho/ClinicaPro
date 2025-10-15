@@ -17,12 +17,14 @@ namespace ClinicaPro.Infrastructure.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        // CORREÇÃO: Adicionamos 'virtual' aqui para permitir a sobrescrita em MedicoRepository
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        // Já estava corrigido
+        public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -39,7 +41,6 @@ namespace ClinicaPro.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // ✅ Atualizado para deletar usando o ID
         public async Task DeleteAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id);

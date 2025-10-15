@@ -21,12 +21,18 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ClinicaDbContext>();
 
-// 🔹 Injeção de dependência dos repositórios genéricos
+// =================================================================
+// 🔹 INJEÇÃO DE DEPENDÊNCIA DOS REPOSITÓRIOS (Atualizado)
+// =================================================================
+
+// 🔹 Repositório Genérico (Assumindo que IRepository<> e Repository<> são seus genéricos)
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-// 🔹 Injeção de dependência dos repositórios específicos
-// NOVO: Registro do Repositório específico para o Handler do MediatR
+// 🔹 Repositórios Específicos
 builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
+// ✅ CORREÇÃO APLICADA: Registro do Repositório de Especialidades
+builder.Services.AddScoped<IEspecialidadeRepository, EspecialidadeRepository>(); 
+
 
 // 🔹 Injeção de dependência dos serviços via interfaces (Serão removidos com a refatoração completa)
 builder.Services.AddScoped<IPacienteService, PacienteService>();
