@@ -150,6 +150,6 @@ namespace ClinicaPro.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
         
-        // REMOVIDO: private bool MedicoExists(int id) { ... }
+        
     }
 }
