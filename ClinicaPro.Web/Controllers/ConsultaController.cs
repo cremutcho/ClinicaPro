@@ -2,77 +2,95 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc; // Resolve o erro CS0246: Controller e IActionResult
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using MediatR;
 using ClinicaPro.Core.Entities;
-using ClinicaPro.Infrastructure.Data;
+using System.Collections.Generic;
+
+// ✅ USINGS CRÍTICOS FALTANTES (Resolve ObterTodasConsultasQuery e outros comandos/queries)
+using ClinicaPro.Core.Features.Consultas.Queries;
+using ClinicaPro.Core.Features.Consultas.Commands;
+using ClinicaPro.Core.Features.Medicos.Queries;
+using ClinicaPro.Core.Features.Pacientes.Queries;
 
 namespace ClinicaPro.Web.Controllers
 {
     [Authorize(Roles = "Admin,Medico,Recepcionista")]
     public class ConsultaController : Controller
     {
-        private readonly ClinicaDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        // ✅ CAMPOS PRIVADOS FALTANTES (Resolve error CS0103: _mediator e _userManager)
+        private readonly IMediator _mediator;
+        private readonly UserManager<IdentityUser> _userManager; 
 
-        public ConsultaController(ClinicaDbContext context, UserManager<IdentityUser> userManager)
+        // ✅ CONSTRUTOR FALTANTE (Garante que os campos sejam injetados)
+        public ConsultaController(IMediator mediator, UserManager<IdentityUser> userManager)
         {
-            _context = context;
+            _mediator = mediator;
             _userManager = userManager;
         }
 
-        // GET: Consulta
+        // GET: Consulta (Refatorado com MediatR e Lógica de Segurança)
         public async Task<IActionResult> Index()
         {
-            var consultas = _context.Consultas
-                .Include(c => c.Paciente)
-                .Include(c => c.Medico)
-                .AsQueryable();
+            // 1. Usa Query para buscar todas as consultas (com Includes)
+            var consultas = await _mediator.Send(new ObterTodasConsultasQuery());
+            
+            // 2. Garante que a lista não é nula (proteção contra falhas de DI/Handler)
+            if (consultas == null)
+            {
+                consultas = new List<Consulta>();
+            }
 
-            // Se for médico, mostra apenas consultas do próprio médico
+            // 3. Lógica de Segurança: Filtra consultas para o médico logado
             if (User.IsInRole("Medico"))
             {
                 var user = await _userManager.GetUserAsync(User);
-                consultas = consultas.Where(c => c.Medico.Email == user.Email);
+                
+                // ✅ Tratamento de nulidade para Medico (Resolve o NullReferenceException anterior)
+                consultas = consultas.Where(c => c.Medico != null && c.Medico.Email == user.Email);
             }
 
-            return View(await consultas.ToListAsync());
+            return View(consultas.ToList()); 
         }
 
-        // GET: Consulta/Details/5
+        // GET: Consulta/Details/5 (Refatorado com MediatR e Lógica de Segurança)
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
-            var consulta = await _context.Consultas
-                .Include(c => c.Paciente)
-                .Include(c => c.Medico)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            // 1. Usa Query para buscar a consulta
+            var consulta = await _mediator.Send(new ObterConsultaPorIdQuery(id.Value));
 
             if (consulta == null) return NotFound();
 
-            // Médicos só podem ver suas próprias consultas
+            // 2. Lógica de Segurança: Médicos só podem ver suas próprias consultas
             if (User.IsInRole("Medico"))
             {
                 var user = await _userManager.GetUserAsync(User);
-                if (consulta.Medico.Email != user.Email)
+                // Certifica-se de que consulta.Medico não é nulo antes de acessar Email
+                if (consulta.Medico == null || consulta.Medico.Email != user.Email)
                     return Forbid();
             }
 
             return View(consulta);
         }
 
-        // GET: Consulta/Create
+        // GET: Consulta/Create (Refatorado para usar Queries de Dropdown)
         [Authorize(Roles = "Admin,Recepcionista")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.PacienteId = new SelectList(_context.Pacientes, "Id", "Nome");
-            ViewBag.MedicoId = new SelectList(_context.Medicos, "Id", "Nome");
+            // Busca dados para dropdowns via MediatR/Queries
+            var pacientes = await _mediator.Send(new ObterTodosPacientesQuery());
+            var medicos = await _mediator.Send(new ObterTodosMedicosQuery());
+
+            ViewBag.PacienteId = new SelectList(pacientes, "Id", "Nome");
+            ViewBag.MedicoId = new SelectList(medicos, "Id", "Nome");
             return View();
         }
 
-        // POST: Consulta/Create
+        // POST: Consulta/Create (Refatorado com Command)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Recepcionista")]
@@ -80,31 +98,42 @@ namespace ClinicaPro.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.PacienteId = new SelectList(_context.Pacientes, "Id", "Nome", consulta.PacienteId);
-                ViewBag.MedicoId = new SelectList(_context.Medicos, "Id", "Nome", consulta.MedicoId);
+                // Lógica de erro: Recarrega dropdowns via Queries
+                var pacientes = await _mediator.Send(new ObterTodosPacientesQuery());
+                var medicos = await _mediator.Send(new ObterTodosMedicosQuery());
+
+                ViewBag.PacienteId = new SelectList(pacientes, "Id", "Nome", consulta.PacienteId);
+                ViewBag.MedicoId = new SelectList(medicos, "Id", "Nome", consulta.MedicoId);
                 return View(consulta);
             }
 
-            _context.Add(consulta);
-            await _context.SaveChangesAsync();
+            // ✅ REFATORADO: Envia o Command
+            await _mediator.Send(new CriarConsultaCommand { Consulta = consulta });
+
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Consulta/Edit/5
+        // GET: Consulta/Edit/5 (Refatorado com Query e Queries de Dropdown)
         [Authorize(Roles = "Admin,Recepcionista")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
-            var consulta = await _context.Consultas.FindAsync(id);
+            // Busca a consulta via Query
+            var consulta = await _mediator.Send(new ObterConsultaPorIdQuery(id.Value));
+
             if (consulta == null) return NotFound();
 
-            ViewBag.PacienteId = new SelectList(_context.Pacientes, "Id", "Nome", consulta.PacienteId);
-            ViewBag.MedicoId = new SelectList(_context.Medicos, "Id", "Nome", consulta.MedicoId);
+            // Recarrega dropdowns via Queries
+            var pacientes = await _mediator.Send(new ObterTodosPacientesQuery());
+            var medicos = await _mediator.Send(new ObterTodosMedicosQuery());
+
+            ViewBag.PacienteId = new SelectList(pacientes, "Id", "Nome", consulta.PacienteId);
+            ViewBag.MedicoId = new SelectList(medicos, "Id", "Nome", consulta.MedicoId);
             return View(consulta);
         }
 
-        // POST: Consulta/Edit/5
+        // POST: Consulta/Edit/5 (Refatorado com Command e Query de Concorrência)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Recepcionista")]
@@ -114,60 +143,54 @@ namespace ClinicaPro.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.PacienteId = new SelectList(_context.Pacientes, "Id", "Nome", consulta.PacienteId);
-                ViewBag.MedicoId = new SelectList(_context.Medicos, "Id", "Nome", consulta.MedicoId);
+                // Lógica de erro: Recarrega dropdowns via Queries
+                var pacientes = await _mediator.Send(new ObterTodosPacientesQuery());
+                var medicos = await _mediator.Send(new ObterTodosMedicosQuery());
+                ViewBag.PacienteId = new SelectList(pacientes, "Id", "Nome", consulta.PacienteId);
+                ViewBag.MedicoId = new SelectList(medicos, "Id", "Nome", consulta.MedicoId);
                 return View(consulta);
             }
 
             try
             {
-                _context.Update(consulta);
-                await _context.SaveChangesAsync();
+                // ✅ REFATORADO: Envia o Command
+                await _mediator.Send(new UpdateConsultaCommand { Consulta = consulta });
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ConsultaExists(consulta.Id)) return NotFound();
+                // ✅ REFATORADO: Usa Query para verificar existência
+                var existe = await _mediator.Send(new ConsultaExisteQuery(consulta.Id));
+                if (!existe) return NotFound();
                 else throw;
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Consulta/Delete/5
+        // GET: Consulta/Delete/5 (Refatorado com Query)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
 
-            var consulta = await _context.Consultas
-                .Include(c => c.Paciente)
-                .Include(c => c.Medico)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            // Busca a consulta via Query
+            var consulta = await _mediator.Send(new ObterConsultaPorIdQuery(id.Value));
 
             if (consulta == null) return NotFound();
 
             return View(consulta);
         }
 
-        // POST: Consulta/Delete/5
+        // POST: Consulta/Delete/5 (Refatorado com Command)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var consulta = await _context.Consultas.FindAsync(id);
-            if (consulta != null)
-            {
-                _context.Consultas.Remove(consulta);
-                await _context.SaveChangesAsync();
-            }
+            // ✅ REFATORADO: Envia o Command
+            await _mediator.Send(new DeleteConsultaCommand(id));
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ConsultaExists(int id)
-        {
-            return _context.Consultas.Any(e => e.Id == id);
         }
     }
 }

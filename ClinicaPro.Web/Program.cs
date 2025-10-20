@@ -1,5 +1,5 @@
 using ClinicaPro.Core.Interfaces;
-using ClinicaPro.Core.Services; // Mantido para IConsultaService
+using ClinicaPro.Core.Services; // Mantido para o Seed de roles/admin se necessário, mas o Service será removido
 using ClinicaPro.Infrastructure.Data;
 using ClinicaPro.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -28,27 +28,23 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 // 🔹 Repositório Genérico
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-// 🔹 Repositórios Específicos
+// 🔹 Repositórios Específicos (Mantenha estes, pois os Handlers precisam deles)
 builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
 builder.Services.AddScoped<IEspecialidadeRepository, EspecialidadeRepository>(); 
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
+builder.Services.AddScoped<IConsultaRepository, ConsultaRepository>(); // ✅ NOVO: Repositório para Consultas
 
-// ❌ REMOVIDOS: Injeções de serviços antigos (IPacienteService e IMedicoService)
-// O PacientesController não os usa mais, e removê-los simplifica o DI.
-// builder.Services.AddScoped<IPacienteService, PacienteService>();
+// ❌ REMOVIDOS: Services antigos (TODA a camada de Service foi substituída por CQRS)
+// builder.Services.AddScoped<IPacienteService, PacienteService>(); 
 // builder.Services.AddScoped<IMedicoService, MedicoService>();
-
-// ✅ MANTIDO: Serviço que ainda não refatoramos
-builder.Services.AddScoped<IConsultaService, ConsultaService>();
-
+// builder.Services.AddScoped<IConsultaService, ConsultaService>(); // ❌ REMOVIDO AGORA
 
 // 🔹 MediatR (CQRS)
 builder.Services.AddMediatR(cfg => 
 {
-    // 🚨 CORRIGIDO: Garante que o MediatR encontre os Handlers no projeto ClinicaPro.Core 
-    // e no projeto ClinicaPro.Web (onde está o Program.cs)
-    cfg.RegisterServicesFromAssembly(typeof(Medico).Assembly); // Ex: Queries/Commands de Paciente/Medico
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); // Ex: O próprio projeto Web
+    // Garante que o MediatR encontre os Handlers no projeto Core e no projeto Web
+    cfg.RegisterServicesFromAssembly(typeof(Medico).Assembly); 
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); 
 });
 
 // 🔹 Adiciona suporte a controllers e views (MVC)

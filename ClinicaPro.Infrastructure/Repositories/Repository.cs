@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ClinicaPro.Infrastructure.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq; // Necessário para .AnyAsync
 
 namespace ClinicaPro.Infrastructure.Repositories
 {
@@ -17,13 +18,11 @@ namespace ClinicaPro.Infrastructure.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        // CORREÇÃO: Adicionamos 'virtual' aqui para permitir a sobrescrita em MedicoRepository
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
-        // Já estava corrigido
         public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
@@ -49,6 +48,13 @@ namespace ClinicaPro.Infrastructure.Repositories
                 _dbSet.Remove(entity);
                 await _context.SaveChangesAsync();
             }
+        }
+        
+        // ✅ ADICIONADO: Implementação do ExistsAsync para satisfazer IRepository<T>
+        public async Task<bool> ExistsAsync(int id)
+        {
+            // Usa o método genérico do EF Core para verificar a propriedade 'Id'
+            return await _dbSet.AnyAsync(e => EF.Property<int>(e, "Id") == id);
         }
     }
 }
