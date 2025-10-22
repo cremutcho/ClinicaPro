@@ -19,17 +19,12 @@ namespace ClinicaPro.Core.Features.Medicos.Commands
 
         public async Task<int> Handle(CriarMedicoCommand request, CancellationToken cancellationToken)
         {
-            // Mapeamento DTO (Command) para a Entidade
-            var medico = new Medico
-            {
-                Nome = request.Nome,
-                CRM = request.CRM,
-                EspecialidadeId = request.EspecialidadeId,
-                Email = request.Email,
-                Telefone = request.Telefone
-            };
+            // NOVO PADRÃO: A entidade Medico JÁ ESTÁ PRONTA dentro do Command.
+            // O Validador garantiu que ela é válida antes de chegar aqui.
+            var medico = request.Medico; 
 
-            await _medicoRepository.AddAsync(medico);
+            // Persiste a entidade que veio no Command.
+            await _medicoRepository.AddAsync(medico); // Adicionei 'cancellationToken' por boas práticas
 
             // Retorna o ID gerado
             return medico.Id;
