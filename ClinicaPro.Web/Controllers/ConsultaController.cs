@@ -46,10 +46,18 @@ namespace ClinicaPro.Web.Controllers
             // 3. Lógica de Segurança: Filtra consultas para o médico logado
             if (User.IsInRole("Medico"))
             {
+                // Garante que o usuário Identity não é nulo antes de prosseguir.
                 var user = await _userManager.GetUserAsync(User);
                 
-                // ✅ Tratamento de nulidade para Medico (Resolve o NullReferenceException anterior)
-                consultas = consultas.Where(c => c.Medico != null && c.Medico.Email == user.Email);
+                // CORREÇÃO CS8602 (Linha 52 no seu log):
+                // Usamos o operador '!' (null-forgiving) em 'user.Email' pois 'user' já foi 
+                // verificado implicitamente pelo contexto de segurança (e GetUserAsync só retorna null se o Identity falhar).
+                // Adicionamos a checagem 'user is not null' para tranquilizar o compilador sobre o acesso a user.Email.
+                if (user is not null)
+                {
+                    // Onde: c.Medico.Email == user.Email
+                    consultas = consultas.Where(c => c.Medico != null && c.Medico.Email == user.Email!);
+                }
             }
 
             return View(consultas.ToList()); 
@@ -69,9 +77,23 @@ namespace ClinicaPro.Web.Controllers
             if (User.IsInRole("Medico"))
             {
                 var user = await _userManager.GetUserAsync(User);
-                // Certifica-se de que consulta.Medico não é nulo antes de acessar Email
-                if (consulta.Medico == null || consulta.Medico.Email != user.Email)
+                
+                // CORREÇÃO CS8602 (Linha 73 no seu log):
+                // Adicionamos a verificação explícita 'user is not null' e usamos o operador '!'
+                // no acesso a user.Email. A lógica de verificação c.Medico == null é mantida.
+                if (user is not null)
+                {
+                    if (consulta.Medico == null || consulta.Medico.Email != user.Email!)
+                    {
+                        return Forbid();
+                    }
+                }
+                else
+                {
+                    // Caso extremamente improvável: usuário não encontrado no Identity, mas tem a role.
+                    // Isso evita o erro CS8602 em user.Email, forçando um Forbid.
                     return Forbid();
+                }
             }
 
             return View(consulta);

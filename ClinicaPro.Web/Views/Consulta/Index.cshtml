@@ -22,8 +22,12 @@
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.First().DataHora)</th>
                     <th>@Html.DisplayNameFor(model => model.First().Status)</th>
-                    <th>@Html.DisplayNameFor(model => model.First().Paciente.Nome)</th>
-                    <th>@Html.DisplayNameFor(model => model.First().Medico.Nome)</th>
+                    
+                    @* CORREÇÃO CS8602 (Linha 25 e 26): Uso seguro de navegação. Embora DisplayNameFor use Expression Tree, adicionar a verificação no .cshtml pode resolver o warning. Uma alternativa é verificar no Controller. Vamos tentar simplificar aqui. * @
+                    @* Uma vez que o MediatR deve retornar a consulta com Includes, esta é a forma mais simples de resolver o warning na view: *@
+                    <th>Paciente</th> @* Removido o acesso a .Paciente.Nome para simplificar e remover warning *@
+                    <th>Médico</th> @* Removido o acesso a .Medico.Nome para simplificar e remover warning *@
+                    
                     <th>@Html.DisplayNameFor(model => model.First().Observacoes)</th>
                     <th class="text-center">Ações</th> @* Adicionando centralização para a coluna de Ações *@
                 </tr>
@@ -33,8 +37,11 @@
                     <tr>
                         <td>@item.DataHora.ToString("g")</td>
                         <td>@item.Status</td>
-                        <td>@item.Paciente.Nome</td>
-                        <td>@item.Medico.Nome</td>
+                        
+                        @* CORREÇÃO CS8602 (Linhas 36 e 37 no corpo): Usa o operador ?. para evitar desreferência nula e o ?? para um fallback (N/A) *@
+                        <td>@(item.Paciente?.Nome ?? "N/A")</td>
+                        <td>@(item.Medico?.Nome ?? "N/A")</td>
+                        
                         <td>@item.Observacoes</td>
                         <td class="text-center">
                             @* Ações padronizadas e com ícones *@
