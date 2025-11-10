@@ -49,7 +49,6 @@
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
 
-    <!-- Top Navbar -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
             <div class="container-fluid">
@@ -87,7 +86,6 @@
         </nav>
     </header>
 
-    <!-- Sidebar -->
     <div class="sidebar">
         <h5 class="text-center mb-4">Menu</h5>
         <a asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill me-2"></i>Dashboard</a>
@@ -96,6 +94,8 @@
         {
             if (User.IsInRole("Admin"))
             {
+                <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a> 
+                
                 <a asp-controller="Pacientes" asp-action="Index"><i class="bi bi-person-fill me-2"></i>Pacientes</a>
                 <a asp-controller="Medico" asp-action="Index"><i class="bi bi-people-fill me-2"></i>Médicos</a>
                 <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Consultas</a>
@@ -112,12 +112,10 @@
         }
     </div>
 
-    <!-- Main Content -->
     <main class="content flex-grow-1">
         @RenderBody()
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white text-center text-muted py-3 border-top mt-auto">
         <div class="container">
             &copy; 2025 - <strong>ClinicaPro</strong> - 

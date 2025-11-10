@@ -41,7 +41,7 @@ builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
 builder.Services.AddScoped<IEspecialidadeRepository, EspecialidadeRepository>(); 
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
 builder.Services.AddScoped<IConsultaRepository, ConsultaRepository>();
-
+builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 // ----------------------------------------------------------------------
 // 🔹 MediatR (CQRS) - Registro de Handlers
 builder.Services.AddMediatR(cfg => 
