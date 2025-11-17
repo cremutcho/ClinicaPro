@@ -1,47 +1,54 @@
-@model ClinicaPro.Core.Entities.Funcionario
+@model ClinicaPro.Core.Features.RH.Queries.FuncionarioDto
 
 @{
-    ViewData["Title"] = "Confirmar Deleção";
+    ViewData["Title"] = "Excluir Funcionário";
 }
 
-<h1 class="mt-4 text-center text-danger fw-bold">Deletar Funcionário</h1>
+<h1 class="mt-4 text-danger fw-bold">Excluir Funcionário</h1>
 
-<div class="card shadow-lg border-0 rounded-4 mt-4 mx-auto" style="max-width: 650px;">
-    <div class="card-header bg-danger text-white text-center fw-bold fs-5">
-        Confirmação de Exclusão
+<h3 class="mt-3">Tem certeza que deseja desativar este funcionário?</h3>
+
+<div class="alert alert-warning mt-3" role="alert">
+  Atenção: A exclusão neste sistema é uma **desativação lógica** (o registro é mantido).
+</div>
+
+<div class="card shadow-sm border-0 mt-4">
+    <div class="card-header bg-danger text-white">
+        <h4 class="mb-0">Dados do Funcionário</h4>
     </div>
-    <div class="card-body p-4">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Nome)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Nome)</dd>
 
-        <h3 class="text-center mb-4">Tem certeza de que deseja deletar o funcionário **@Model.Nome @Model.Sobrenome**?</h3>
-
-        <div class="alert alert-danger" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> 
-            <strong>Atenção:</strong> Esta ação é irreversível e removerá o registro permanentemente.
-        </div>
-
-        <dl class="row border-bottom pb-3 mb-3">
-            <dt class="col-sm-4 fw-semibold">ID:</dt>
-            <dd class="col-sm-8">@Html.DisplayFor(model => model.Id)</dd>
+            <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Sobrenome)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Sobrenome)</dd>
             
-            <dt class="col-sm-4 fw-semibold">CPF:</dt>
+            <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.CPF)</dt>
             <dd class="col-sm-8">@Html.DisplayFor(model => model.CPF)</dd>
-            
-            <dt class="col-sm-4 fw-semibold">Cargo:</dt>
+
+            <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.Cargo)</dt>
             <dd class="col-sm-8">@Html.DisplayFor(model => model.Cargo)</dd>
-        </dl>
-        
-        <form asp-action="Delete">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="Id" /> 
             
-            <div class="d-flex justify-content-between mt-4">
-                <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
-                    <i class="bi bi-arrow-left-circle me-1"></i> Cancelar
-                </a>
-                <button type="submit" class="btn btn-danger btn-lg px-4">
-                    <i class="bi bi-trash-fill me-1"></i> Confirmar Deleção
-                </button>
-            </div>
-        </form>
+            <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.DataContratacao)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.DataContratacao)</dd>
+
+            <dt class="col-sm-4 text-muted">Situação Atual</dt>
+            <dd class="col-sm-8">
+                 <span class="badge @(Model.Ativo ? "bg-success" : "bg-danger")">
+                    @(Model.Ativo ? "Ativo" : "Inativo")
+                </span>
+            </dd>
+        </dl>
     </div>
 </div>
+
+<form asp-action="Delete" method="post" class="mt-4">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger btn-lg me-2">
+        <i class="bi bi-trash-fill"></i> Confirmar Desativação
+    </button>
+    <a asp-action="Index" class="btn btn-secondary btn-lg">
+        <i class="bi bi-arrow-left"></i> Cancelar
+    </a>
+</form>
