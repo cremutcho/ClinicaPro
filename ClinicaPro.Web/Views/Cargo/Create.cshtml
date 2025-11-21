@@ -1,0 +1,30 @@
+@model ClinicaPro.Core.Entities.Cargo
+
+@{
+    ViewData["Title"] = "Novo Cargo";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label asp-for="Nome" class="form-label"></label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Salario" class="form-label"></label>
+            <input asp-for="Salario" class="form-control" />
+            <span asp-validation-for="Salario" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

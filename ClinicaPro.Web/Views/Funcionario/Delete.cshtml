@@ -1,0 +1,21 @@
+@model ClinicaPro.Core.Entities.Funcionario
+
+@{
+    ViewData["Title"] = "Excluir Funcionário";
+}
+
+<div class="container mt-5">
+    <h3>@ViewData["Title"]</h3>
+
+    <div class="mb-3">
+        <p>Tem certeza que deseja excluir o funcionário <strong>@Model.Nome</strong>?</p>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i> Excluir
+        </button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>

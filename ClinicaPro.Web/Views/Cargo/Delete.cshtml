@@ -1,0 +1,19 @@
+@model ClinicaPro.Core.Entities.Cargo
+
+@{
+    ViewData["Title"] = "Excluir Cargo";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="alert alert-warning">
+        Tem certeza que deseja excluir o cargo: <strong>@Model.Nome</strong> com salário <strong>@Model.Salario.ToString("C")</strong>?
+    </div>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>

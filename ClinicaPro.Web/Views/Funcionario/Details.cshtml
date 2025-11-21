@@ -1,0 +1,21 @@
+@model ClinicaPro.Core.Entities.Funcionario
+
+@{
+    ViewData["Title"] = "Detalhes do Funcionário";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="mb-3"><strong>Nome:</strong> @Model.Nome</div>
+    <div class="mb-3"><strong>CPF:</strong> @Model.CPF</div>
+    <div class="mb-3"><strong>Email:</strong> @Model.Email</div>
+    <div class="mb-3"><strong>Telefone:</strong> @Model.Telefone</div>
+    <div class="mb-3"><strong>Data de Nascimento:</strong> @Model.DataNascimento.ToString("dd/MM/yyyy")</div>
+    <div class="mb-3"><strong>Data de Admissão:</strong> @Model.DataAdmissao.ToString("dd/MM/yyyy")</div>
+    <div class="mb-3"><strong>Cargo:</strong> @Model.Cargo?.Nome</div>
+    <div class="mb-3"><strong>Ativo:</strong> @(Model.Ativo ? "Sim" : "Não")</div>
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

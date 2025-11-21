@@ -15,7 +15,7 @@ using ClinicaPro.Core.Features.Especialidades.Queries;
 
 namespace ClinicaPro.Web.Controllers
 {
-    [Authorize(Roles = "Admin,Medico")]
+    [Authorize(Roles = "Admin")]
     public class MedicoController : Controller
     {
         private readonly IMediator _mediator;
