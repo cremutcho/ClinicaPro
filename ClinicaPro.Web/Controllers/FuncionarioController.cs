@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MediatR;
 
-// 🔹 NOVOS USINGS — para os relatórios via CQRS
+// Queries para relatórios via CQRS
 using ClinicaPro.Core.Features.Funcionarios.Queries.GetFuncionariosPorCargo;
 using ClinicaPro.Core.Features.Funcionarios.Queries.GetFuncionariosPorStatus;
 using ClinicaPro.Core.Features.Funcionarios.Queries.GetFuncionariosPorPeriodo;
@@ -29,34 +29,31 @@ namespace ClinicaPro.Web.Controllers
             _mediator = mediator;
         }
 
-        // GET: Funcionario
+        // ============================================================
+        // CRUD Funcionario (Index / Details / Create / Edit / Delete)
+        // ============================================================
+
         public async Task<IActionResult> Index()
         {
             var funcionarios = await _funcionarioRepository.GetAllAsync();
             return View(funcionarios);
         }
 
-        // GET: Funcionario/Details/5
         public async Task<IActionResult> Details(int id)
         {
             var funcionario = await _funcionarioRepository.GetByIdAsync(id);
-
-            if (funcionario == null)
-                return NotFound();
+            if (funcionario == null) return NotFound();
 
             funcionario.Cargo = await _cargoRepository.GetByIdAsync(funcionario.CargoId);
-
             return View(funcionario);
         }
 
-        // GET: Funcionario/Create
         public async Task<IActionResult> Create()
         {
             ViewBag.Cargos = new SelectList(await _cargoRepository.GetAllAsync(), "Id", "Nome");
             return View();
         }
 
-        // POST: Funcionario/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Funcionario funcionario)
@@ -71,25 +68,20 @@ namespace ClinicaPro.Web.Controllers
             return View(funcionario);
         }
 
-        // GET: Funcionario/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var funcionario = await _funcionarioRepository.GetByIdAsync(id);
-            if (funcionario == null)
-                return NotFound();
+            if (funcionario == null) return NotFound();
 
             ViewBag.Cargos = new SelectList(await _cargoRepository.GetAllAsync(), "Id", "Nome", funcionario.CargoId);
-
             return View(funcionario);
         }
 
-        // POST: Funcionario/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Funcionario funcionario)
         {
-            if (id != funcionario.Id)
-                return BadRequest();
+            if (id != funcionario.Id) return BadRequest();
 
             if (ModelState.IsValid)
             {
@@ -101,20 +93,15 @@ namespace ClinicaPro.Web.Controllers
             return View(funcionario);
         }
 
-        // GET: Funcionario/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var funcionario = await _funcionarioRepository.GetByIdAsync(id);
-
-            if (funcionario == null)
-                return NotFound();
+            if (funcionario == null) return NotFound();
 
             funcionario.Cargo = await _cargoRepository.GetByIdAsync(funcionario.CargoId);
-
             return View(funcionario);
         }
 
-        // POST: Funcionario/DeleteConfirmed
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -124,50 +111,77 @@ namespace ClinicaPro.Web.Controllers
         }
 
         // ============================================================
-        // 🔥 NOVAS ROTAS DE RELATÓRIOS (Por Cargo / Status / Período)
+        // 🔥 RELATÓRIOS FUNCIONAIS (sem formulários de cadastro)
         // ============================================================
 
-        // GET: Funcionario/PorCargo
+        // Relatório: Funcionários por Cargo
+        // GET & POST: Funcionario/PorCargo
         [HttpGet]
         public async Task<IActionResult> PorCargo()
         {
-            // monta o dropdown de cargos para o formulário
+            // Exibe o dropdown de cargos para o usuário escolher
             ViewBag.Cargos = new SelectList(await _cargoRepository.GetAllAsync(), "Id", "Nome");
-            return View(); // vai procurar Views/Funcionario/PorCargo.cshtml
+            return View(); // Procura automaticamente PorCargo.cshtml
         }
 
-        // POST: Funcionario/PorCargo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PorCargo(int? cargoId)
         {
-            // Se o usuário submeter sem escolher cargo, redireciona de volta ao formulário
+            // Se não informar cargo, volta para o formulário com mensagem
             if (!cargoId.HasValue)
             {
                 ViewBag.Cargos = new SelectList(await _cargoRepository.GetAllAsync(), "Id", "Nome");
                 ModelState.AddModelError("cargoId", "Escolha um cargo.");
-                return View();
+                return View(); // Ainda usa PorCargo.cshtml
             }
 
-            // Busca via MediatR (sua query espera int)
+            // Busca os funcionários do cargo selecionado via MediatR
             var resultado = await _mediator.Send(new GetFuncionariosPorCargoQuery(cargoId.Value));
 
-            // reutiliza a View Index para mostrar a lista filtrada
-            return View("Index", resultado);
+            // Reutiliza a mesma view PorCargo.cshtml ou, se quiser, uma view de listagem separada
+            return View("PorCargo", resultado);
         }
 
-        // GET: Funcionario/PorStatus?ativo=true
-        public async Task<IActionResult> PorStatus(bool ativo)
+
+
+        // Relatório: Funcionários por Status (Ativos/Inativos)
+        public async Task<IActionResult> PorStatus(bool? ativo)
         {
-            var resultado = await _mediator.Send(new GetFuncionariosPorStatusQuery(ativo));
-            return View("Index", resultado);
+            // Guarda o valor selecionado para preencher o dropdown
+            ViewData["Ativo"] = ativo;
+
+            if (!ativo.HasValue)
+            {
+                return View(); // mostra apenas o formulário
+            }
+
+            var resultado = await _mediator.Send(new GetFuncionariosPorStatusQuery(ativo.Value));
+
+            return View(resultado);
         }
 
-        // GET: Funcionario/PorPeriodo?inicio=2024-01-01&fim=2024-12-31
-        public async Task<IActionResult> PorPeriodo(DateTime inicio, DateTime fim)
+
+
+        // Relatório: Funcionários por Período
+        public async Task<IActionResult> PorPeriodo(DateTime? inicio, DateTime? fim)
         {
-            var resultado = await _mediator.Send(new GetFuncionariosPorPeriodoQuery(inicio, fim));
-            return View("Index", resultado);
+            // Passa os valores para ViewData para preencher o formulário
+            ViewData["Inicio"] = inicio?.ToString("yyyy-MM-dd");
+            ViewData["Fim"] = fim?.ToString("yyyy-MM-dd");
+
+            if (!inicio.HasValue || !fim.HasValue)
+            {
+                return View(); // apenas o formulário
+            }
+
+            var resultado = await _mediator.Send(
+                new GetFuncionariosPorPeriodoQuery(inicio.Value, fim.Value)
+            );
+
+            return View(resultado);
         }
+
+
     }
 }

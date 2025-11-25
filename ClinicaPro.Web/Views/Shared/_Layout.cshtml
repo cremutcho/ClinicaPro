@@ -16,7 +16,6 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -50,11 +49,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">🏥 ClinicaPro</a>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="topNavbar">
                 <ul class="navbar-nav ms-auto">
                     @if (SignInManager.IsSignedIn(User))
@@ -86,43 +83,35 @@
 <div class="sidebar">
     <h5 class="text-center mb-4">Menu</h5>
 
-    <a asp-controller="Home" asp-action="Index">
-        <i class="bi bi-house-door-fill me-2"></i>Dashboard
-    </a>
+    <a asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill me-2"></i>Dashboard</a>
 
     @if (SignInManager.IsSignedIn(User))
     {
+        if (User.IsInRole("Admin") || User.IsInRole("RH"))
+        {
+            <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a>
+            <a asp-controller="Cargo" asp-action="Index"><i class="bi bi-briefcase-fill me-2"></i>Cargos</a>
+
+            <!-- Novas views de relatório RH -->
+            <a asp-controller="Funcionario" asp-action="PorCargo"><i class="bi bi-list-check me-2"></i>Funcionários por Cargo</a>
+            <a asp-controller="Funcionario" asp-action="PorPeriodo"><i class="bi bi-calendar-event me-2"></i>Funcionários por Período</a>
+            <a asp-controller="Funcionario" asp-action="PorStatus"><i class="bi bi-toggle-on me-2"></i>Funcionários por Status</a>
+        }
+
         if (User.IsInRole("Admin"))
         {
             <a asp-controller="Pacientes" asp-action="Index"><i class="bi bi-person-fill me-2"></i>Pacientes</a>
             <a asp-controller="Medico" asp-action="Index"><i class="bi bi-people-fill me-2"></i>Médicos</a>
             <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Consultas</a>
-            <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a>
-            <a asp-controller="Cargo" asp-action="Index"><i class="bi bi-briefcase-fill me-2"></i>Cargos</a>
-
-            <!-- 🔥 Novo menu: Funcionários por Cargo -->
-            <a asp-controller="Funcionario" asp-action="PorCargo">
-                <i class="bi bi-list-check me-2"></i>Funcionários por Cargo
-            </a>
         }
-        else if (User.IsInRole("RH"))
-        {
-            <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a>
-            <a asp-controller="Cargo" asp-action="Index"><i class="bi bi-briefcase-fill me-2"></i>Cargos</a>
 
-            <!-- 🔥 RH também vê o menu -->
-            <a asp-controller="Funcionario" asp-action="PorCargo">
-                <i class="bi bi-list-check me-2"></i>Funcionários por Cargo
-            </a>
-        }
-        else if (User.IsInRole("Recepcionista"))
+        if (User.IsInRole("Recepcionista"))
         {
             <a asp-controller="Paciente" asp-action="Index"><i class="bi bi-person-fill me-2"></i>Pacientes</a>
             <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Consultas</a>
-            <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a>
-            <a asp-controller="Cargo" asp-action="Index"><i class="bi bi-briefcase-fill me-2"></i>Cargos</a>
         }
-        else if (User.IsInRole("Medico"))
+
+        if (User.IsInRole("Medico"))
         {
             <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Minhas Consultas</a>
         }

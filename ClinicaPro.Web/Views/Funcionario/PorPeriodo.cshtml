@@ -1,0 +1,62 @@
+@model IEnumerable<ClinicaPro.Core.Entities.Funcionario>
+
+@{
+    ViewData["Title"] = "Funcionários por Período";
+
+    // Pegando os valores enviados (opcional)
+    var inicioValue = ViewData["Inicio"] as string ?? "";
+    var fimValue = ViewData["Fim"] as string ?? "";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 mt-5">@ViewData["Title"]</h2>
+
+    <form method="get" asp-action="PorPeriodo" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label>Data Inicial:</label>
+            <input type="date" name="inicio" class="form-control" required value="@inicioValue" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Data Final:</label>
+            <input type="date" name="fim" class="form-control" required value="@fimValue" />
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+    </form>
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Data Admissão</th>
+                    <th>Tempo de Empresa</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var f in Model)
+            {
+                var tempoEmpresa = DateTime.Now - f.DataAdmissao;
+                var anos = (int)(tempoEmpresa.Days / 365);
+                var meses = (int)((tempoEmpresa.Days % 365) / 30);
+
+                <tr>
+                    <td>@f.Nome</td>
+                    <td>@f.Cargo?.Nome</td>
+                    <td>@f.DataAdmissao.ToString("dd/MM/yyyy")</td>
+                    <td>@anos anos e @meses meses</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else if (Model != null)
+    {
+        <p class="text-muted">Nenhum registro encontrado no período informado.</p>
+    }
+</div>
