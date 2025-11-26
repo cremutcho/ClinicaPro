@@ -1,90 +1,140 @@
-/* ========================================= */
-/* 🔹 Layout do Dashboard (Novo) 🔹 */
-/* ========================================= */
-/* Define o container principal da página para melhor espaçamento e centralização */
-.dashboard-container {
-    padding-top: 3rem; /* Espaço maior do topo */
-    padding-bottom: 3rem;
+/* ===========================
+   ClinicaPro - site.css (ERP)
+   =========================== */
+
+/* --- Paleta / Variáveis (simples) --- */
+:root{
+  --cp-primary: #0d6efd;
+  --cp-dark: #0b3b66;
+  --cp-muted: #6c757d;
+  --cp-bg: #f6f7fb;
+  --cp-surface: #ffffff;
+  --cp-success: #198754;
+  --cp-danger: #dc3545;
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 80px;
 }
 
-/* Garante que o container de cards use a largura máxima e centraliza seus itens */
-.dashboard-cards-row {
-    display: flex;
-    justify-content: center; /* Centraliza os cards horizontalmente */
-    gap: 20px; /* Espaçamento entre os cards (melhor que margem) */
-    flex-wrap: wrap; /* Garante que os cards quebrem a linha em telas menores */
-    margin: 0; /* Remove margens laterais padrão */
+/* --- Reset / Base --- */
+html,body{height:100%;}
+body.app-body{
+  background: var(--cp-bg);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color:#222;
+  margin:0;
+  padding-top:56px; /* espaço para topbar */
 }
 
-/* Garante que o container de coluna de cada card ocupe o espaço necessário */
-.dashboard-card-col {
-    /* Em vez de usar classes como col-md-3, você pode forçar um tamanho específico 
-       se não quiser usar o grid padrão do Bootstrap */
-    max-width: 250px; 
-    flex-basis: 250px;
-    margin: 10px; /* Adiciona um pequeno espaçamento uniforme */
+/* --- Topbar --- */
+.topbar{
+  height:56px;
+  z-index:1030;
+}
+.topbar .brand-mark{
+  width:34px;height:34px;border-radius:8px;background:var(--cp-primary);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;
+}
+.topbar .user-avatar{width:36px;height:36px;border-radius:50%;}
+
+/* --- App shell --- */
+.app-shell{min-height:calc(100vh - 56px);display:flex;}
+
+/* --- Sidebar --- */
+.app-sidebar{
+  width:var(--sidebar-width);
+  min-width:var(--sidebar-width);
+  max-width:var(--sidebar-width);
+  transition:width .25s ease, min-width .25s ease;
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  left:0;
+  top:56px;
+  bottom:0;
+  overflow:auto;
+  color:#fff;
+  background:linear-gradient(180deg,var(--cp-primary),#0b63d6);
+  box-shadow:2px 0 8px rgba(11,59,102,0.06);
 }
 
-/* ========================================= */
-/* 🔹 Padronização de títulos das páginas (Modificado) 🔹 */
-/* ========================================= */
-.page-title {
-    font-size: 2.5rem; /* Título maior */
-    font-weight: 700;
-    color: #1a1a1a; /* Cor mais escura para contraste */
-    text-align: left;
-    margin-top: 5rem; /* Mais distância do header (Você quer descer o título!) */
-    margin-bottom: 0.5rem; /* Menos espaço para o subtítulo vir logo abaixo */
-    letter-spacing: -0.5px;
+/* collapsed */
+.app-sidebar.collapsed{
+  width:var(--sidebar-collapsed);
+  min-width:var(--sidebar-collapsed);
+  max-width:var(--sidebar-collapsed);
 }
 
-.page-subtitle {
-    font-size: 1.2rem;
-    color: #555555;
-    text-align: left;
-    margin-top: 0; /* Espaço eliminado para ficar mais perto do título */
-    margin-bottom: 3rem; /* Aumenta o espaço após o subtítulo e antes dos cards */
+/* sidebar top */
+.app-sidebar .sidebar-top{border-bottom:1px solid rgba(255,255,255,0.06);}
+.app-sidebar .sidebar-nav{padding-top:12px;}
+.sidebar-link{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:8px;
+  margin:6px 8px;
+  text-decoration:none;
+  transition:background .12s ease, transform .08s ease;
+}
+.sidebar-link i{font-size:1.05rem;}
+.sidebar-link:hover{background: rgba(255,255,255,0.08); text-decoration:none; transform:translateY(-1px);}
+
+/* small labels */
+.sidebar-section{padding:8px 12px; color:rgba(255,255,255,0.6); font-size:.72rem;}
+
+/* footer inside sidebar */
+.sidebar-footer{border-top:1px solid rgba(255,255,255,0.06); color:rgba(255,255,255,0.7);}
+
+/* --- Content area (push right to leave sidebar space) --- */
+.app-content{
+  margin-left:var(--sidebar-width);
+  transition:margin-left .25s ease;
+  width:100%;
+}
+.app-sidebar.collapsed + .app-content{ margin-left: var(--sidebar-collapsed); }
+
+/* --- Responsive: on small screens the sidebar becomes overlayed */
+@media (max-width: 991px){
+  .app-sidebar{ position:fixed; z-index:1040; transform:translateX(-120%); transition:transform .22s ease; }
+  .app-sidebar.open{ transform:translateX(0); }
+  .app-sidebar.collapsed{ width:var(--sidebar-width); min-width:var(--sidebar-width); }
+  .app-content{ margin-left:0; padding-bottom:3rem; }
 }
 
-/* ========================================= */
-/* 🔹 Estilo de cartões do Dashboard (Modificado) 🔹 */
-/* ========================================= */
-.card {
-    /* Sua regra original: */
-    border-radius: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    
-    /* Modificado: Remove as margens de topo e fundo que interferem na centralização */
-    margin-top: 0; 
-    margin-bottom: 0; 
-    
-    padding: 1.5rem 1rem; /* Conteúdo mais espaçado */
-    height: 100%; /* Garante que todos os cards tenham a mesma altura (útil em grid) */
-    text-align: center; /* Centraliza o conteúdo dentro do card */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra mais sutil */
-    border: none; /* Remove a borda padrão do Bootstrap */
-}
+/* --- Page title / subtitle --- */
+.page-title{ font-size:1.6rem; font-weight:700; color:#1b2430; margin-bottom:.25rem; }
+.page-subtitle{ color:var(--cp-muted); margin-bottom:1.25rem; }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada no hover */
-}
+/* --- Cards (you had these) --- */
+.dashboard-container{ padding-top:1rem; padding-bottom:2rem; }
+.dashboard-cards-row{ display:flex; justify-content:flex-start; gap:20px; flex-wrap:wrap; margin:0; }
+.dashboard-card-col{ max-width:250px; flex-basis:250px; margin:10px; }
+.card{ border-radius:0.75rem; transition:transform .2s ease, box-shadow .2s ease; padding:1.25rem; height:100%; text-align:center; box-shadow:0 6px 18px rgba(15,23,42,0.04); border:none; background:var(--cp-surface); }
+.card:hover{ transform:translateY(-6px); box-shadow:0 14px 36px rgba(15,23,42,0.06); }
+.card-icon{ font-size:2.2rem; margin-bottom:.5rem; display:inline-block; color:var(--cp-primary); }
+.card-title{ font-size:1rem; font-weight:600; color:#333; margin-bottom:.4rem; }
+.card-value{ font-size:1.9rem; font-weight:700; color:var(--cp-primary); }
 
-.card-icon {
-    font-size: 2.5rem; /* Ícones maiores */
-    margin-bottom: 0.5rem;
-    display: inline-block;
-}
+/* --- Tables --- */
+.table thead th{ background:transparent; border-bottom:2px solid rgba(0,0,0,0.05); }
+.table tbody tr:hover{ background: rgba(13,110,253,0.03); }
 
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-}
+/* --- Buttons --- */
+.btn-primary{ background:var(--cp-primary); border-color:var(--cp-primary); }
+.btn-outline-secondary{ border-color: rgba(0,0,0,0.08); }
 
-.card-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #0d6efd; /* Cor primária */
-}
+/* --- Footer --- */
+.app-footer{ margin-left:var(--sidebar-width); transition:margin-left .25s ease; }
+.app-sidebar.collapsed + .app-content + .app-footer{ margin-left:var(--sidebar-collapsed); }
+
+/* --- Small utilities --- */
+.notif-badge{ font-size:.6rem; padding:.25rem .4rem; }
+
+/* --- Accessibility: focus --- */
+.sidebar-link:focus, .sidebar-link:active { outline: 3px solid rgba(255,255,255,0.08); outline-offset:2px; }
+
+/* --- Dark Mode (simple toggle class) --- */
+body.theme-dark{ background:#0f1724; color:#cbd5e1; }
+body.theme-dark .app-sidebar{ background:linear-gradient(180deg,#071635,#0b2a4a); }
+body.theme-dark .card{ background:#0b1220; color:#e6eef8; box-shadow:none; }

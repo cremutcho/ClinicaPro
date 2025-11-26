@@ -1,0 +1,54 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<aside id="appSidebar" class="app-sidebar bg-primary text-white">
+    <div class="sidebar-top p-3 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+            <span class="fs-5 fw-bold">ClinicaPro</span>
+        </div>
+        <button id="sidebarCollapse" class="btn btn-sm btn-outline-light d-md-none" aria-label="Fechar menu">
+            <i class="bi bi-x"></i>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav px-1 pb-4">
+        <a class="sidebar-link" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill me-2"></i> Dashboard</a>
+
+        @if (SignInManager.IsSignedIn(User))
+        {
+            if (User.IsInRole("Admin") || User.IsInRole("RH"))
+            {
+                <a class="sidebar-link" asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i> Funcionários</a>
+                <a class="sidebar-link" asp-controller="Cargo" asp-action="Index"><i class="bi bi-briefcase-fill me-2"></i> Cargos</a>
+                <a class="sidebar-link" asp-controller="Funcionario" asp-action="PorCargo"><i class="bi bi-list-check me-2"></i> Por Cargo</a>
+            }
+
+            if (User.IsInRole("Admin"))
+            {
+                <a class="sidebar-link" asp-controller="Pacientes" asp-action="Index"><i class="bi bi-person-fill me-2"></i> Pacientes</a>
+                <a class="sidebar-link" asp-controller="Medico" asp-action="Index"><i class="bi bi-people-fill me-2"></i> Médicos</a>
+                <a class="sidebar-link" asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i> Consultas</a>
+
+                <div class="sidebar-section mt-3 px-2 text-uppercase small text-white-50">Financeiro</div>
+                <a class="sidebar-link" asp-controller="ContasPagar" asp-action="Index"><i class="bi bi-cash-coin me-2"></i> Contas a Pagar</a>
+                <a class="sidebar-link" asp-controller="ContasReceber" asp-action="Index"><i class="bi bi-wallet2 me-2"></i> Contas a Receber</a>
+            }
+
+            if (User.IsInRole("Recepcionista"))
+            {
+                <a class="sidebar-link" asp-controller="Pacientes" asp-action="Index"><i class="bi bi-person-fill me-2"></i> Pacientes</a>
+                <a class="sidebar-link" asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i> Consultas</a>
+            }
+
+            if (User.IsInRole("Medico"))
+            {
+                <a class="sidebar-link" asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i> Minhas Consultas</a>
+            }
+        }
+    </nav>
+
+    <div class="sidebar-footer p-3 mt-auto">
+        <div class="small text-white-50">Versão <strong>0.1</strong></div>
+    </div>
+</aside>

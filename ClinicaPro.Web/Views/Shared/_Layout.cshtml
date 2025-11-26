@@ -1,149 +1,167 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ClinicaPro</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ClinicaPro.Web.styles.css" asp-append-version="true" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-
+        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
-            top: 0;
-            bottom: 0;
+            top: 56px;
             left: 0;
-            width: 250px; /* ← Aumentei um pouco para caber textos longos */
-            background-color: #0d6efd;
-            padding-top: 70px;
-            color: white;
-
-            /* NOVO: Permite scroll e evita sumir itens */
+            width: 250px;
+            height: calc(100vh - 56px);
+            background: #f8f9fa;
+            border-right: 1px solid #ddd;
+            padding-top: 10px;
             overflow-y: auto;
+            transition: width 0.3s ease;
+            z-index: 1030;
         }
+        .sidebar.collapsed { width: 70px !important; }
+        .sidebar.collapsed .list-group-item { font-size: 0; text-indent: -9999px; }
+        .sidebar.collapsed i { font-size: 1.3rem !important; margin: 0 auto !important; text-indent: 0 !important; }
 
-        .sidebar a {
-            color: white;
-            display: block;
-            padding: 10px 18px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 0.95rem;
-            white-space: nowrap;     /* evita quebrar */
-            overflow: hidden;        /* evita texto sair */
-            text-overflow: ellipsis; /* coloca "..." se necessário */
-        }
+        .sub-item { padding-left: 35px !important; font-size: 0.9rem; background: #ffffff; }
+        .accordion-toggle { cursor: pointer; }
 
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .content {
-            margin-left: 260px; /* acompanha sidebar maior */
-            padding: 20px;
-        }
+        /* CONTEÚDO DESLOCADO */
+        #content-wrapper { margin-left: 250px; padding-top: 70px; transition: margin-left 0.3s ease; }
+        #content-wrapper.collapsed { margin-left: 70px !important; }
     </style>
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body>
 
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">🏥 ClinicaPro</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar">
-                <span class="navbar-toggler-icon"></span>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar navbar-expand-lg topbar navbar-light bg-white border-bottom shadow-sm fixed-top">
+        <div class="container-fluid px-3">
+            <button id="sidebarToggle" class="btn btn-outline-secondary d-flex align-items-center me-2">
+                <i class="bi bi-list"></i>
             </button>
-            <div class="collapse navbar-collapse" id="topNavbar">
-                <ul class="navbar-nav ms-auto">
+
+            <a class="navbar-brand d-flex align-items-center gap-2 me-3" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark rounded-circle d-inline-flex align-items-center justify-content-center">🏥</span>
+                <span class="brand-text fw-bold">ClinicaPro</span>
+            </a>
+
+            <form class="d-none d-md-flex ms-3 me-auto" role="search" asp-controller="Home" asp-action="Index">
+                <div class="input-group input-group-sm">
+                    <input class="form-control form-control-sm" type="search" placeholder="Pesquisar pacientes, consultas..." aria-label="Pesquisar">
+                    <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </form>
+
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-3 d-none d-md-block">
+                    <a class="nav-link position-relative" href="#" title="Notificações">
+                        <i class="bi bi-bell fs-5"></i>
+                        <span class="notif-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
                     @if (SignInManager.IsSignedIn(User))
                     {
-                        <li class="nav-item d-flex align-items-center text-white me-3">
-                            <span>👤 @UserManager.GetUserName(User)</span>
-                        </li>
-                        <li class="nav-item">
-                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-outline-light btn-sm">Sair</button>
-                            </form>
-                        </li>
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center me-2">
+                                @(UserManager.GetUserName(User)?.Substring(0,1).ToUpper() ?? "U")
+                            </div>
+                            <div class="d-none d-md-block text-start">
+                                <div class="fw-semibold small">@UserManager.GetUserName(User)</div>
+                                <div class="small text-muted">Perfil</div>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item" asp-controller="Account" asp-action="Manage">Conta</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="px-3">
+                                    <button type="submit" class="btn btn-outline-danger w-100">Sair</button>
+                                </form>
+                            </li>
+                        </ul>
                     }
                     else
                     {
-                        <li class="nav-item">
-                            <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Login">Entrar</a>
-                        </li>
-                        <li class="nav-item ms-2">
-                            <a class="btn btn-light btn-sm" asp-controller="Account" asp-action="Register">Registrar</a>
-                        </li>
+                        <a class="nav-link" asp-controller="Account" asp-action="Login">Entrar</a>
                     }
-                </ul>
-            </div>
+                </li>
+            </ul>
         </div>
     </nav>
-</header>
 
-<div class="sidebar">
-    <h5 class="text-center mb-4">Menu</h5>
+    <!-- ===== SIDEBAR ===== -->
+    <div id="sidebar" class="sidebar">
+        <div class="list-group list-group-flush">
 
-    <a asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill me-2"></i>Dashboard</a>
+            <a class="list-group-item list-group-item-action py-2" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
 
-    @if (SignInManager.IsSignedIn(User))
-    {
-        if (User.IsInRole("Admin") || User.IsInRole("RH"))
-        {
-            <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a>
-            <a asp-controller="Cargo" asp-action="Index"><i class="bi bi-briefcase-fill me-2"></i>Cargos</a>
+            <!-- PACIENTES / CONSULTAS / MEDICOS -->
+            <a class="list-group-item list-group-item-action py-2" asp-controller="Pacientes" asp-action="Index">
+                <i class="bi bi-person-fill me-2"></i> Pacientes
+            </a>
+            <a class="list-group-item list-group-item-action py-2" asp-controller="Medico" asp-action="Index">
+                <i class="bi bi-people-fill me-2"></i> Médicos
+            </a>
+            <a class="list-group-item list-group-item-action py-2" asp-controller="Consulta" asp-action="Index">
+                <i class="bi bi-calendar-check-fill me-2"></i> Consultas
+            </a>
 
-            <a asp-controller="Funcionario" asp-action="PorCargo"><i class="bi bi-list-check me-2"></i>Funcionários por Cargo</a>
-            <a asp-controller="Funcionario" asp-action="PorPeriodo"><i class="bi bi-calendar-event me-2"></i>Funcionários por Período</a>
-            <a asp-controller="Funcionario" asp-action="PorStatus"><i class="bi bi-toggle-on me-2"></i>Funcionários por Status</a>
-        }
-
-        if (User.IsInRole("Admin"))
-        {
-            <a asp-controller="Pacientes" asp-action="Index"><i class="bi bi-person-fill me-2"></i>Pacientes</a>
-            <a asp-controller="Medico" asp-action="Index"><i class="bi bi-people-fill me-2"></i>Médicos</a>
-            <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Consultas</a>
+            <!-- FUNCIONÁRIOS (RH) -->
+            <a class="list-group-item list-group-item-action py-2 accordion-toggle" data-bs-toggle="collapse" href="#rhMenu">
+                <i class="bi bi-people-fill me-2"></i> RH
+                <i class="bi bi-chevron-down float-end"></i>
+            </a>
+            <div class="collapse" id="rhMenu">
+                <a class="list-group-item sub-item" asp-controller="Funcionario" asp-action="Index">Funcionários</a>
+                <a class="list-group-item sub-item" asp-controller="Cargo" asp-action="Index">Cargos</a>
+            </div>
 
             <!-- FINANCEIRO -->
-            <a asp-controller="ContasPagar" asp-action="Index"><i class="bi bi-cash-coin me-2"></i>Contas a Pagar</a>
-            <a asp-controller="ContasReceber" asp-action="Index"><i class="bi bi-wallet2 me-2"></i>Contas a Receber</a>
-        }
+            <a class="list-group-item list-group-item-action py-2 accordion-toggle" data-bs-toggle="collapse" href="#financeiroMenu">
+                <i class="bi bi-cash-coin me-2"></i> Financeiro
+                <i class="bi bi-chevron-down float-end"></i>
+            </a>
+            <div class="collapse" id="financeiroMenu">
+                <a class="list-group-item sub-item" asp-controller="ContasPagar" asp-action="Index">Contas a Pagar</a>
+                <a class="list-group-item sub-item" asp-controller="ContasReceber" asp-action="Index">Contas a Receber</a>
+            </div>
 
-        if (User.IsInRole("Recepcionista"))
-        {
-            <a asp-controller="Paciente" asp-action="Index"><i class="bi bi-person-fill me-2"></i>Pacientes</a>
-            <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Consultas</a>
-        }
-
-        if (User.IsInRole("Medico"))
-        {
-            <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Minhas Consultas</a>
-        }
-    }
-</div>
-
-<main class="content flex-grow-1">
-    @RenderBody()
-</main>
-
-<footer class="bg-white text-center text-muted py-3 border-top mt-auto">
-    <div class="container">
-        &copy; 2025 - <strong>ClinicaPro</strong> -
-        <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Política de Privacidade</a>
+        </div>
     </div>
-</footer>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-@await RenderSectionAsync("Scripts", required: false)
+    <!-- ===== CONTEÚDO ===== -->
+    <main id="content-wrapper" class="container-fluid">
+        <div class="pt-4">
+            @RenderBody()
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar = document.getElementById("sidebar");
+        const content = document.getElementById("content-wrapper");
+        const btn = document.getElementById("sidebarToggle");
+
+        btn.addEventListener("click", () => {
+            sidebar.classList.toggle("collapsed");
+            content.classList.toggle("collapsed");
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
