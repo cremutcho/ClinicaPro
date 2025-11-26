@@ -1,0 +1,61 @@
+@model ClinicaPro.Core.Entities.ContaPagar
+
+@{
+    ViewData["Title"] = "Editar Conta a Pagar";
+}
+
+<h2 class="mt-5 mb-4">Editar Conta a Pagar</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Descricao" class="form-label"></label>
+        <input asp-for="Descricao" class="form-control" />
+        <span asp-validation-for="Descricao" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Valor" class="form-label"></label>
+        <input asp-for="Valor" class="form-control" />
+        <span asp-validation-for="Valor" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataEmissao" class="form-label"></label>
+        <input asp-for="DataEmissao" type="date" class="form-control" />
+        <span asp-validation-for="DataEmissao" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataVencimento" class="form-label"></label>
+        <input asp-for="DataVencimento" type="date" class="form-control" />
+        <span asp-validation-for="DataVencimento" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataPagamento" class="form-label"></label>
+        <input asp-for="DataPagamento" type="date" class="form-control" />
+        <span asp-validation-for="DataPagamento" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-select"
+                asp-items="Html.GetEnumSelectList<ClinicaPro.Core.Entities.Enums.StatusFinanceiro>()"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Categoria" class="form-label"></label>
+        <input asp-for="Categoria" class="form-control" />
+        <span asp-validation-for="Categoria" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

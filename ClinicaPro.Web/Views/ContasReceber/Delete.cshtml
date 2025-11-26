@@ -1,0 +1,34 @@
+@model ClinicaPro.Core.Entities.ContaReceber
+
+@{
+    ViewData["Title"] = "Excluir Conta a Receber";
+}
+
+<h2 class="mt-5 mb-4">Excluir Conta a Receber</h2>
+
+<div class="alert alert-danger">
+    Tem certeza que deseja excluir esta conta?
+</div>
+
+<div class="card p-4 mb-3">
+    <dl class="row">
+        <dt class="col-sm-3">Descrição</dt>
+        <dd class="col-sm-9">@Model.Descricao</dd>
+
+        <dt class="col-sm-3">Valor</dt>
+        <dd class="col-sm-9">@Model.Valor.ToString("C")</dd>
+
+        <dt class="col-sm-3">Cliente</dt>
+        <dd class="col-sm-9">@Model.Cliente</dd>
+
+        <dt class="col-sm-3">Vencimento</dt>
+        <dd class="col-sm-9">@Model.DataVencimento.ToShortDateString()</dd>
+    </dl>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

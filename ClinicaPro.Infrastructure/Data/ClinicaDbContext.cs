@@ -17,13 +17,17 @@ namespace ClinicaPro.Infrastructure.Data
         public DbSet<Especialidade> Especialidades { get; set; } = null!;
         public DbSet<Consulta> Consultas { get; set; } = null!;
         public DbSet<Prontuario> Prontuarios { get; set; } = null!;
-        
+
         // DbSet mínimo para RH
         public DbSet<Funcionario> Funcionarios { get; set; } = null!;
         public DbSet<Cargo> Cargos { get; set; }
-        
-        
-        
+
+        public DbSet<ContaPagar> ContasPagar { get; set; }
+        public DbSet<ContaReceber> ContasReceber { get; set; }
+
+
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,59 @@
+@model ClinicaPro.Core.Entities.ContaPagar
+
+@{
+    ViewData["Title"] = "Cadastrar Conta a Pagar";
+}
+
+<h2 class="mb-4 mt-5">Cadastrar Conta a Pagar</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Descricao" class="form-label">Descrição</label>
+        <input asp-for="Descricao" class="form-control" />
+        <span asp-validation-for="Descricao" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Categoria" class="form-label">Categoria</label>
+        <input asp-for="Categoria" class="form-control" />
+        <span asp-validation-for="Categoria" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Valor" class="form-label">Valor</label>
+        <input asp-for="Valor" class="form-control" />
+        <span asp-validation-for="Valor" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataEmissao" class="form-label">Data de Emissão</label>
+        <input asp-for="DataEmissao" type="date" class="form-control" />
+        <span asp-validation-for="DataEmissao" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataVencimento" class="form-label">Data de Vencimento</label>
+        <input asp-for="DataVencimento" type="date" class="form-control" />
+        <span asp-validation-for="DataVencimento" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataPagamento" class="form-label">Data de Pagamento</label>
+        <input asp-for="DataPagamento" type="date" class="form-control" />
+        <span asp-validation-for="DataPagamento" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label">Status</label>
+        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ClinicaPro.Core.Entities.Enums.StatusFinanceiro>()">
+            <option value="">Selecione</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cadastrar</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,52 @@
+@model ClinicaPro.Core.Entities.ContaReceber
+
+@{
+    ViewData["Title"] = "Cadastrar Conta a Receber";
+}
+
+<h2 class="mt-5 mb-4">Cadastrar Conta a Receber</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Descricao" class="form-label"></label>
+        <input asp-for="Descricao" class="form-control" />
+        <span asp-validation-for="Descricao" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Valor" class="form-label"></label>
+        <input asp-for="Valor" class="form-control" />
+        <span asp-validation-for="Valor" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataEmissao" class="form-label"></label>
+        <input asp-for="DataEmissao" type="date" class="form-control" />
+        <span asp-validation-for="DataEmissao" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataVencimento" class="form-label"></label>
+        <input asp-for="DataVencimento" type="date" class="form-control" />
+        <span asp-validation-for="DataVencimento" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DataRecebimento" class="form-label"></label>
+        <input asp-for="DataRecebimento" type="date" class="form-control" />
+        <span asp-validation-for="DataRecebimento" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Cliente" class="form-label"></label>
+        <input asp-for="Cliente" class="form-control" />
+        <span asp-validation-for="Cliente" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,32 @@
+@model ClinicaPro.Core.Entities.ContaReceber
+
+@{
+    ViewData["Title"] = "Detalhes da Conta a Receber";
+}
+
+<h2 class="mt-5 mb-4">Detalhes da Conta a Receber</h2>
+
+<div class="card p-4">
+    <dl class="row">
+        <dt class="col-sm-3">Descrição</dt>
+        <dd class="col-sm-9">@Model.Descricao</dd>
+
+        <dt class="col-sm-3">Valor</dt>
+        <dd class="col-sm-9">@Model.Valor.ToString("C")</dd>
+
+        <dt class="col-sm-3">Data de Emissão</dt>
+        <dd class="col-sm-9">@Model.DataEmissao.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Data de Vencimento</dt>
+        <dd class="col-sm-9">@Model.DataVencimento.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Data de Recebimento</dt>
+        <dd class="col-sm-9">@Model.DataRecebimento?.ToShortDateString() ?? "—"</dd>
+
+        <dt class="col-sm-3">Cliente</dt>
+        <dd class="col-sm-9">@Model.Cliente</dd>
+    </dl>
+</div>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning mt-3">Editar</a>
+<a asp-action="Index" class="btn btn-secondary mt-3">Voltar</a>

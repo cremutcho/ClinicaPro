@@ -21,24 +21,33 @@
             top: 0;
             bottom: 0;
             left: 0;
-            width: 220px;
+            width: 250px; /* ← Aumentei um pouco para caber textos longos */
             background-color: #0d6efd;
             padding-top: 70px;
             color: white;
+
+            /* NOVO: Permite scroll e evita sumir itens */
+            overflow-y: auto;
         }
+
         .sidebar a {
             color: white;
             display: block;
-            padding: 12px 20px;
+            padding: 10px 18px;
             text-decoration: none;
             border-radius: 5px;
+            font-size: 0.95rem;
+            white-space: nowrap;     /* evita quebrar */
+            overflow: hidden;        /* evita texto sair */
+            text-overflow: ellipsis; /* coloca "..." se necessário */
         }
+
         .sidebar a:hover {
             background-color: rgba(255, 255, 255, 0.2);
         }
 
         .content {
-            margin-left: 240px;
+            margin-left: 260px; /* acompanha sidebar maior */
             padding: 20px;
         }
     </style>
@@ -92,7 +101,6 @@
             <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a>
             <a asp-controller="Cargo" asp-action="Index"><i class="bi bi-briefcase-fill me-2"></i>Cargos</a>
 
-            <!-- Novas views de relatório RH -->
             <a asp-controller="Funcionario" asp-action="PorCargo"><i class="bi bi-list-check me-2"></i>Funcionários por Cargo</a>
             <a asp-controller="Funcionario" asp-action="PorPeriodo"><i class="bi bi-calendar-event me-2"></i>Funcionários por Período</a>
             <a asp-controller="Funcionario" asp-action="PorStatus"><i class="bi bi-toggle-on me-2"></i>Funcionários por Status</a>
@@ -103,6 +111,10 @@
             <a asp-controller="Pacientes" asp-action="Index"><i class="bi bi-person-fill me-2"></i>Pacientes</a>
             <a asp-controller="Medico" asp-action="Index"><i class="bi bi-people-fill me-2"></i>Médicos</a>
             <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Consultas</a>
+
+            <!-- FINANCEIRO -->
+            <a asp-controller="ContasPagar" asp-action="Index"><i class="bi bi-cash-coin me-2"></i>Contas a Pagar</a>
+            <a asp-controller="ContasReceber" asp-action="Index"><i class="bi bi-wallet2 me-2"></i>Contas a Receber</a>
         }
 
         if (User.IsInRole("Recepcionista"))

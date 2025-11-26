@@ -1,0 +1,42 @@
+@model IEnumerable<ClinicaPro.Core.Entities.ContaReceber>
+
+@{
+    ViewData["Title"] = "Contas a Receber";
+}
+
+<h2 class="mt-5 mb-4">Contas a Receber</h2>
+
+<a class="btn btn-primary mb-3" asp-action="Create">Nova Conta</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-primary">
+        <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Data de Emissão</th>
+            <th>Vencimento</th>
+            <th>Recebimento</th>
+            <th>Cliente</th>
+            <th style="width: 200px;">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Descricao</td>
+                <td>@item.Valor.ToString("C")</td>
+                <td>@item.DataEmissao.ToShortDateString()</td>
+                <td>@item.DataVencimento.ToShortDateString()</td>
+                <td>@(item.DataRecebimento?.ToShortDateString() ?? "—")</td>
+                <td>@item.Cliente</td>
+
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Detalhes</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

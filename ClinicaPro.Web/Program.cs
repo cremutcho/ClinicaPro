@@ -29,6 +29,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 
 // Repositório Genérico
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 // Repositórios Específicos
 builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
@@ -37,6 +38,10 @@ builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
 builder.Services.AddScoped<IConsultaRepository, ConsultaRepository>();
 builder.Services.AddScoped<ICargoRepository, CargoRepository>();
 builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
+builder.Services.AddScoped<IContaPagarRepository, ContaPagarRepository>();
+builder.Services.AddScoped<IContaReceberRepository, ContaReceberRepository>();
+
+
 
 // MediatR (CQRS)
 builder.Services.AddMediatR(cfg => 
