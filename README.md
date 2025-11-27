@@ -1,111 +1,81 @@
-🏥 ClinicaPro — Sistema de Gestão Clínica (ERP Médico)
+# ClinicaPro
 
-ERP modular para gestão clínica, com arquitetura profissional, CQRS, validação, identidade, UI moderna e integração com banco de dados.
+Sistema ERP para gestão de clínica: paciência, médicos, consultas, RH e financeiro.
 
-📌 Status do Projeto
+## 🏥 Visão Geral
 
+ClinicaPro é uma aplicação web desenvolvida em .NET 9 + ASP.NET Core + Entity Framework, que oferece:
 
+- Cadastro e gerenciamento de Pacientes, Médicos e Funcionários  
+- Agendamento de Consultas  
+- Módulo Financeiro: Contas a Pagar e Contas a Receber  
+- Controle de Cargos e Permissões de Acesso (Admin, RH, Recepcionista, Médico)  
+- Layout responsivo com interface tipo ERP (sidebar colapsável, menu acordeão, navegação limpa)
 
+## 📸 Telas do Sistema
 
+### Dashboard  
+![Dashboard](images/dashboard.png)  
 
+### Menu RH / Funcionários  
+![RH - Funcionários](images/rh_funcionarios.png)  
 
+### Financeiro  
+![Financeiro](images/financeiro.png)  
 
+### Pacientes  
+![Pacientes](images/pacientes.png)  
 
+### Consultas  
+![Consultas](images/consultas.png)  
 
+> **Obs:** Substitua os caminhos acima (`images/…`) pelos reais onde suas imagens estiverem no repositório.
 
-📸 Demonstração (UI)
+## 🔧 Como Rodar Localmente
 
-Adicionar prints reais depois – coloco placeholders por enquanto.
+1. Clone o repositório:  
+   ```bash
+   git clone https://github.com/cremutcho/ClinicaPro.git
 
-Login	Dashboard	Módulos
+dotnet restore
 
-	
-	
-🧩 Sobre o Projeto
+dotnet ef database update
 
-O ClinicaPro é um sistema ERP para gestão de clínicas, projetado com arquitetura moderna e padrões adotados pelo mercado.
+dotnet run --project ClinicaPro.Web
 
-✔ Focado em:
+🛠️ Tecnologias Usadas
 
-Gestão de pacientes
-
-Agendamentos
-
-Profissionais da saúde
-
-Financeiro (Contas a Pagar/Receber)
-
-Estoque & suprimentos
-
-RH básico
-
-Identidade e permissão por roles
-
-Modularidade
-
-Extensibilidade para se tornar um ERP completo
-
-🧱 Arquitetura Utilizada
-
-O projeto segue uma combinação de padrões profissionais:
-
-📐 Clean Architecture
-
-Separação entre camadas de domínio, aplicação, infraestrutura e apresentação.
-
-⚙ CQRS + Mediator
-
-Uso de MediatR para comandos, queries e handlers.
-
-📦 Repository Pattern
-
-Repositórios para abstração de dados.
-
-🛡 Validações com FluentValidation
-
-Cada comando possui suas próprias regras.
-
-🔑 ASP.NET Identity
-
-Logins, roles e permissões configuradas no projeto Web.
-
-🗄 EF Core + Migrations
-
-Mapeamentos claros, contexto único e migrações organizadas.
-
-🚀 Tecnologias Utilizadas
-Backend
-
-ASP.NET Core 8 Web MVC
-
-MediatR
-
-FluentValidation
+.NET 9 / ASP.NET Core MVC
 
 Entity Framework Core
 
-ASP.NET Identity
+Identity (Autenticação / Autorização)
 
-Clean Architecture
+Bootstrap 5 + Bootstrap Icons
 
-Automapper (caso esteja presente)
+C# / Razor Views / HTML / CSS / JS
 
-SQL Server
+✅ Funcionalidades já Implementadas
 
-Frontend
+CRUD completo para Pacientes, Médicos, Funcionários, Cargos e Consultas
 
-Razor Pages / MVC Views
+Controle de papéis (roles) e permissões
 
-Bootstrap
+Menu lateral colapsável e navegação por acordeão (ERP‑style)
 
-jQuery
+Sistema Financeiro (Contas a Pagar / Receber)
 
-Toast Notifications
+📌 Próximos Passos / Melhorias Sugeridas
 
-Infraestrutura
+Adicionar módulo de Estoque — somente se necessário
 
-EF Core Migrations
+Dashboard com métricas (consultas agendadas, faturamento, pacientes ativos)
 
-Repositórios
+Filtros e buscas avançadas nos listagens
 
-Contexto único (ClinicaProDbContext)
+Exportar relatórios em PDF / Excel
+
+Validações e segurança (input sanitization, autenticação/ autorização refinada)
+
+
+
