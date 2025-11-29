@@ -9,6 +9,7 @@ using MediatR;
 using ClinicaPro.Core.Entities; 
 using FluentValidation;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 🔹 Conexão com o banco de dados
@@ -40,6 +41,7 @@ builder.Services.AddScoped<ICargoRepository, CargoRepository>();
 builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 builder.Services.AddScoped<IContaPagarRepository, ContaPagarRepository>();
 builder.Services.AddScoped<IContaReceberRepository, ContaReceberRepository>();
+builder.Services.AddScoped<IPagamentoRepository, PagamentoRepository>();
 
 
 

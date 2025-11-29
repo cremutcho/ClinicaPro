@@ -4,6 +4,7 @@ using ClinicaPro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicaPro.Infrastructure.Migrations
 {
     [DbContext(typeof(ClinicaDbContext))]
-    partial class ClinicaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251129152250_AddPacienteIdToPagamentos")]
+    partial class AddPacienteIdToPagamentos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -297,6 +300,9 @@ namespace ClinicaPro.Infrastructure.Migrations
                     b.Property<int>("MetodoPagamento")
                         .HasColumnType("int");
 
+                    b.Property<int>("PacienteId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -304,6 +310,8 @@ namespace ClinicaPro.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PacienteId");
 
                     b.ToTable("Pagamentos");
                 });
@@ -571,6 +579,17 @@ namespace ClinicaPro.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Especialidade");
+                });
+
+            modelBuilder.Entity("ClinicaPro.Core.Entities.Pagamento", b =>
+                {
+                    b.HasOne("ClinicaPro.Core.Entities.Paciente", "Paciente")
+                        .WithMany()
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Paciente");
                 });
 
             modelBuilder.Entity("ClinicaPro.Core.Entities.Prontuario", b =>

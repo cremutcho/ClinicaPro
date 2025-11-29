@@ -1,0 +1,42 @@
+@using ClinicaPro.Core.Entities
+@model List<Pagamento>
+
+<h1>Pagamentos</h1>
+
+<!-- Botão para criar novo pagamento -->
+<a class="btn btn-success mb-3" asp-action="Create" asp-controller="Pagamentos">
+    Novo Pagamento
+</a>
+
+@if (!Model.Any())
+{
+    <p>Nenhum pagamento cadastrado ainda.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Valor</th>
+                <th>Data do Pagamento</th>
+                <th>Descrição</th>
+                <th>Método de Pagamento</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pagamento in Model)
+            {
+                <tr>
+                    <td>@pagamento.Id</td>
+                    <td>R$ @pagamento.Valor</td>
+                    <td>@pagamento.DataPagamento.ToShortDateString()</td>
+                    <td>@pagamento.Descricao</td>
+                    <td>@pagamento.MetodoPagamento</td>
+                    <td>@pagamento.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

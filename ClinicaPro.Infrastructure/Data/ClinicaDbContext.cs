@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ClinicaPro.Core.Entities;
 
+
 namespace ClinicaPro.Infrastructure.Data
 {
     // Agora herda de IdentityDbContext para suportar autenticação e roles
@@ -18,12 +19,15 @@ namespace ClinicaPro.Infrastructure.Data
         public DbSet<Consulta> Consultas { get; set; } = null!;
         public DbSet<Prontuario> Prontuarios { get; set; } = null!;
 
-        // DbSet mínimo para RH
+        // DbSet para RH
         public DbSet<Funcionario> Funcionarios { get; set; } = null!;
         public DbSet<Cargo> Cargos { get; set; }
 
+        // DbSet para Financeiro
         public DbSet<ContaPagar> ContasPagar { get; set; }
         public DbSet<ContaReceber> ContasReceber { get; set; }
+
+        public DbSet<Pagamento> Pagamentos { get; set; }
 
 
 
@@ -56,6 +60,8 @@ namespace ClinicaPro.Infrastructure.Data
                 .HasOne(c => c.Medico)
                 .WithMany(m => m.Consultas)
                 .HasForeignKey(c => c.MedicoId);
+
+            
         }
     }
 }

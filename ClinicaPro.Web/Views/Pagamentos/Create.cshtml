@@ -1,0 +1,41 @@
+@model ClinicaPro.Core.Entities.Pagamento
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<h2>Novo Pagamento</h2>
+
+<form asp-action="Create" method="post">
+
+    <div class="form-group mb-3">
+        <label asp-for="Valor"></label>
+        <input asp-for="Valor" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Descricao"></label>
+        <input asp-for="Descricao" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="DataPagamento"></label>
+        <input asp-for="DataPagamento" class="form-control" type="date" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="MetodoPagamento"></label>
+        <select asp-for="MetodoPagamento" 
+                asp-items="Html.GetEnumSelectList<ClinicaPro.Core.Enums.MetodoPagamento>()" 
+                class="form-control">
+            <option value="">Selecione...</option>
+        </select>
+    </div>
+
+    <div class="form-group mt-3">
+        <label>Status</label>
+        <select asp-for="Status" 
+                class="form-control" 
+                asp-items="Html.GetEnumSelectList<ClinicaPro.Core.Enums.StatusPagamento>()">
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Salvar</button>
+</form>

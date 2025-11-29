@@ -16,19 +16,7 @@
 
     <style>
         /* ===== SIDEBAR ===== */
-        .sidebar {
-            position: fixed;
-            top: 56px;
-            left: 0;
-            width: 250px;
-            height: calc(100vh - 56px);
-            background: #f8f9fa;
-            border-right: 1px solid #ddd;
-            padding-top: 10px;
-            overflow-y: auto;
-            transition: width 0.3s ease;
-            z-index: 1030;
-        }
+        .sidebar { position: fixed; top: 56px; left: 0; width: 250px; height: calc(100vh - 56px); background: #f8f9fa; border-right: 1px solid #ddd; padding-top: 10px; overflow-y: auto; transition: width 0.3s ease; z-index: 1030; }
         .sidebar.collapsed { width: 70px !important; }
         .sidebar.collapsed .list-group-item { font-size: 0; text-indent: -9999px; }
         .sidebar.collapsed i { font-size: 1.3rem !important; margin: 0 auto !important; text-indent: 0 !important; }
@@ -110,35 +98,60 @@
             </a>
 
             <!-- PACIENTES / CONSULTAS / MEDICOS -->
-            <a class="list-group-item list-group-item-action py-2" asp-controller="Pacientes" asp-action="Index">
-                <i class="bi bi-person-fill me-2"></i> Pacientes
-            </a>
-            <a class="list-group-item list-group-item-action py-2" asp-controller="Medico" asp-action="Index">
-                <i class="bi bi-people-fill me-2"></i> Médicos
-            </a>
-            <a class="list-group-item list-group-item-action py-2" asp-controller="Consulta" asp-action="Index">
-                <i class="bi bi-calendar-check-fill me-2"></i> Consultas
-            </a>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                if (User.IsInRole("Admin") || User.IsInRole("Recepcionista"))
+                {
+                    <a class="list-group-item list-group-item-action py-2" asp-controller="Pacientes" asp-action="Index">
+                        <i class="bi bi-person-fill me-2"></i> Pacientes
+                    </a>
+                    <a class="list-group-item list-group-item-action py-2" asp-controller="Consulta" asp-action="Index">
+                        <i class="bi bi-calendar-check-fill me-2"></i> Consultas
+                    </a>
+                }
+                if (User.IsInRole("Admin"))
+                {
+                    <a class="list-group-item list-group-item-action py-2" asp-controller="Medico" asp-action="Index">
+                        <i class="bi bi-people-fill me-2"></i> Médicos
+                    </a>
+                }
+                if (User.IsInRole("Medico"))
+                {
+                    <a class="list-group-item list-group-item-action py-2" asp-controller="Consulta" asp-action="Index">
+                        <i class="bi bi-calendar-check-fill me-2"></i> Minhas Consultas
+                    </a>
+                }
+            }
 
-            <!-- FUNCIONÁRIOS (RH) -->
-            <a class="list-group-item list-group-item-action py-2 accordion-toggle" data-bs-toggle="collapse" href="#rhMenu">
-                <i class="bi bi-people-fill me-2"></i> RH
-                <i class="bi bi-chevron-down float-end"></i>
-            </a>
-            <div class="collapse" id="rhMenu">
-                <a class="list-group-item sub-item" asp-controller="Funcionario" asp-action="Index">Funcionários</a>
-                <a class="list-group-item sub-item" asp-controller="Cargo" asp-action="Index">Cargos</a>
-            </div>
+            <!-- RH -->
+            @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("RH")))
+            {
+                <a class="list-group-item list-group-item-action py-2 accordion-toggle" data-bs-toggle="collapse" href="#rhMenu">
+                    <i class="bi bi-people-fill me-2"></i> RH
+                    <i class="bi bi-chevron-down float-end"></i>
+                </a>
+                <div class="collapse" id="rhMenu">
+                    <a class="list-group-item sub-item" asp-controller="Funcionario" asp-action="Index">Funcionários</a>
+                    <a class="list-group-item sub-item" asp-controller="Funcionario" asp-action="PorCargo">Por Cargo</a>
+                    <a class="list-group-item sub-item" asp-controller="Funcionario" asp-action="PorPeriodo">Por Período</a>
+                    <a class="list-group-item sub-item" asp-controller="Funcionario" asp-action="PorStatus">Por Status</a>
+                    <a class="list-group-item sub-item" asp-controller="Cargo" asp-action="Index">Cargos</a>
+                </div>
+            }
 
             <!-- FINANCEIRO -->
-            <a class="list-group-item list-group-item-action py-2 accordion-toggle" data-bs-toggle="collapse" href="#financeiroMenu">
-                <i class="bi bi-cash-coin me-2"></i> Financeiro
-                <i class="bi bi-chevron-down float-end"></i>
-            </a>
-            <div class="collapse" id="financeiroMenu">
-                <a class="list-group-item sub-item" asp-controller="ContasPagar" asp-action="Index">Contas a Pagar</a>
-                <a class="list-group-item sub-item" asp-controller="ContasReceber" asp-action="Index">Contas a Receber</a>
-            </div>
+            @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+            {
+                <a class="list-group-item list-group-item-action py-2 accordion-toggle" data-bs-toggle="collapse" href="#financeiroMenu">
+                    <i class="bi bi-cash-coin me-2"></i> Financeiro
+                    <i class="bi bi-chevron-down float-end"></i>
+                </a>
+                <div class="collapse" id="financeiroMenu">
+                    <a class="list-group-item sub-item" asp-controller="ContasPagar" asp-action="Index">Contas a Pagar</a>
+                    <a class="list-group-item sub-item" asp-controller="ContasReceber" asp-action="Index">Contas a Receber</a>
+                    <a class="list-group-item sub-item" asp-controller="Pagamentos" asp-action="Index">Pagamentos</a>
+                </div>
+            }
 
         </div>
     </div>

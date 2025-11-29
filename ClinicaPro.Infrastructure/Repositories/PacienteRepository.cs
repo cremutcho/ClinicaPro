@@ -15,5 +15,10 @@ namespace ClinicaPro.Infrastructure.Repositories
         {
             return await _dbSet.FirstOrDefaultAsync(p => p.CPF == cpf);
         }
+
+        public async Task<List<Paciente>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync(); // nunca retorna null
+        }
     }
 }
