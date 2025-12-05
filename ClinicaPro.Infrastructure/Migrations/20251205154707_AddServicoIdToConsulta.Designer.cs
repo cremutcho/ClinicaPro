@@ -4,6 +4,7 @@ using ClinicaPro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicaPro.Infrastructure.Migrations
 {
     [DbContext(typeof(ClinicaDbContext))]
-    partial class ClinicaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251205154707_AddServicoIdToConsulta")]
+    partial class AddServicoIdToConsulta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace ClinicaPro.Infrastructure.Migrations
                     b.Property<int>("PacienteId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ServicoId")
+                    b.Property<int>("ServicoId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -576,7 +579,9 @@ namespace ClinicaPro.Infrastructure.Migrations
 
                     b.HasOne("ClinicaPro.Core.Entities.Servico", "Servico")
                         .WithMany()
-                        .HasForeignKey("ServicoId");
+                        .HasForeignKey("ServicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Medico");
 

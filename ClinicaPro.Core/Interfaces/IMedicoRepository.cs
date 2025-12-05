@@ -8,5 +8,8 @@ namespace ClinicaPro.Core.Interfaces
     {
         Task<Medico?> GetByCRMAsync(string crm);
         Task<IEnumerable<Medico>> GetByEspecialidadeAsync(int especialidadeId);
+
+        // ✅ Adicionado para o dropdown funcionar
+        Task<IEnumerable<Medico>> GetAllAsync();
     }
 }

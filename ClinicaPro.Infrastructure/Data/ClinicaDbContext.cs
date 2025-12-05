@@ -28,6 +28,8 @@ namespace ClinicaPro.Infrastructure.Data
         public DbSet<ContaReceber> ContasReceber { get; set; }
 
         public DbSet<Pagamento> Pagamentos { get; set; }
+        public DbSet<Servico> Servicos { get; set; }
+
 
 
 

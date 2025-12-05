@@ -1,0 +1,38 @@
+@model ClinicaPro.Core.Entities.Servico
+
+@{
+    ViewData["Title"] = "Excluir Serviço";
+}
+
+<h2 class="mb-4 text-danger">Excluir Serviço</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <h5>Você tem certeza que deseja excluir este serviço?</h5>
+        </div>
+
+        <div class="mb-3">
+            <strong>Nome:</strong> @Model.Nome
+        </div>
+        <div class="mb-3">
+            <strong>Código TUSS:</strong> @Model.CodigoTuss
+        </div>
+        <div class="mb-3">
+            <strong>Valor Padrão:</strong> @Model.ValorPadrao.ToString("C")
+        </div>
+
+        <form asp-action="DeleteConfirmed" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Excluir
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

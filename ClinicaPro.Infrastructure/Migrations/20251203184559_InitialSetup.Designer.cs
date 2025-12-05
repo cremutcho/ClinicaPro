@@ -4,6 +4,7 @@ using ClinicaPro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicaPro.Infrastructure.Migrations
 {
     [DbContext(typeof(ClinicaDbContext))]
-    partial class ClinicaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251203184559_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +65,6 @@ namespace ClinicaPro.Infrastructure.Migrations
                     b.Property<int>("PacienteId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ServicoId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -73,8 +73,6 @@ namespace ClinicaPro.Infrastructure.Migrations
                     b.HasIndex("MedicoId");
 
                     b.HasIndex("PacienteId");
-
-                    b.HasIndex("ServicoId");
 
                     b.ToTable("Consultas");
                 });
@@ -339,29 +337,6 @@ namespace ClinicaPro.Infrastructure.Migrations
                     b.ToTable("Prontuarios");
                 });
 
-            modelBuilder.Entity("ClinicaPro.Core.Entities.Servico", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CodigoTuss")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("ValorPadrao")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Servicos");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -574,15 +549,9 @@ namespace ClinicaPro.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ClinicaPro.Core.Entities.Servico", "Servico")
-                        .WithMany()
-                        .HasForeignKey("ServicoId");
-
                     b.Navigation("Medico");
 
                     b.Navigation("Paciente");
-
-                    b.Navigation("Servico");
                 });
 
             modelBuilder.Entity("ClinicaPro.Core.Entities.Funcionario", b =>
