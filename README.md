@@ -65,13 +65,7 @@ Menu lateral colapsável e navegação por acordeão (ERP‑style)
 
 Sistema Financeiro (Contas a Pagar / Receber)
 
-📌 Próximos Passos / Melhorias Sugeridas
 
-Adicionar módulo de Estoque — somente se necessário
-
-Dashboard com métricas (consultas agendadas, faturamento, pacientes ativos)
-
-Filtros e buscas avançadas nos listagens
 
 Exportar relatórios em PDF / Excel
 
