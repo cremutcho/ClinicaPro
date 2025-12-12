@@ -1,4 +1,5 @@
 using ClinicaPro.Core.Enums; // certifique-se deste using
+using System;
 
 namespace ClinicaPro.Core.Entities
 {
@@ -7,13 +8,14 @@ namespace ClinicaPro.Core.Entities
         public int Id { get; set; }
         public decimal Valor { get; set; }
         public DateTime DataPagamento { get; set; }
-        public string Descricao { get; set; }
+        public string Descricao { get; set; } = string.Empty; // inicialização para evitar warning
 
-        // AQUI: apenas uma propriedade, do tipo enum
+        // Propriedades do tipo enum
         public MetodoPagamento MetodoPagamento { get; set; }
         public StatusPagamento Status { get; set; } = StatusPagamento.Pendente;
 
-        // 🔹 Novo: referência ao paciente
-       
+        // 🔹 Referência ao paciente (caso queira adicionar futuramente)
+        // public int PacienteId { get; set; }
+        // public Paciente? Paciente { get; set; }
     }
 }

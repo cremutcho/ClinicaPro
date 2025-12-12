@@ -2,6 +2,8 @@ using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
 using ClinicaPro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ClinicaPro.Infrastructure.Repositories
 {
@@ -16,7 +18,8 @@ namespace ClinicaPro.Infrastructure.Repositories
             return await _dbSet.FirstOrDefaultAsync(p => p.CPF == cpf);
         }
 
-        public async Task<List<Paciente>> GetAllAsync()
+        // Usa "new" para esconder o método da base
+        public new async Task<IEnumerable<Paciente>> GetAllAsync()
         {
             return await _dbSet.ToListAsync(); // nunca retorna null
         }

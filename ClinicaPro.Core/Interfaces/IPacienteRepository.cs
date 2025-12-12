@@ -7,7 +7,8 @@ namespace ClinicaPro.Core.Interfaces
     public interface IPacienteRepository : IRepository<Paciente>
     {
         Task<Paciente?> GetByCPFAsync(string cpf);
-        Task<IEnumerable<Paciente>> GetAllAsync();
 
+        // 🔥 Palavra-chave 'new' para ocultar o método da interface base
+        new Task<IEnumerable<Paciente>> GetAllAsync();
     }
 }

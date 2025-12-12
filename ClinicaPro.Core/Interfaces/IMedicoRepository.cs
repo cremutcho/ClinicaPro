@@ -10,6 +10,6 @@ namespace ClinicaPro.Core.Interfaces
         Task<IEnumerable<Medico>> GetByEspecialidadeAsync(int especialidadeId);
 
         // ✅ Adicionado para o dropdown funcionar
-        Task<IEnumerable<Medico>> GetAllAsync();
+        new Task<IEnumerable<Medico>> GetAllAsync();
     }
 }

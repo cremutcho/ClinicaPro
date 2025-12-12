@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Features.Financeiro.ContasReceber.Commands
 {
-    public class UpdateContaReceberCommandHandler : IRequestHandler<UpdateContaReceberCommand, ContaReceber>
+    public class UpdateContaReceberCommandHandler : IRequestHandler<UpdateContaReceberCommand, ContaReceber?>
     {
         private readonly IContaReceberRepository _repository;
 
@@ -15,11 +15,11 @@ namespace ClinicaPro.Core.Features.Financeiro.ContasReceber.Commands
             _repository = repository;
         }
 
-        public async Task<ContaReceber> Handle(UpdateContaReceberCommand request, CancellationToken cancellationToken)
+        public async Task<ContaReceber?> Handle(UpdateContaReceberCommand request, CancellationToken cancellationToken)
         {
             var existing = await _repository.GetByIdAsync(request.Conta.Id);
             if (existing == null)
-                return null;
+                return null; // Mantemos o retorno nulo seguro
 
             // Atualiza os campos
             existing.Descricao = request.Conta.Descricao;

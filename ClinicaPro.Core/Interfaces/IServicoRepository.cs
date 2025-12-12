@@ -6,7 +6,8 @@ namespace ClinicaPro.Core.Interfaces
 {
     public interface IServicoRepository : IRepository<Servico>
     {
-        Task<IEnumerable<Servico>> GetAllAsync();
-        Task<Servico?> GetByIdAsync(int id);
+        // 🔥 'new' indica que estamos ocultando o método da interface base
+        new Task<IEnumerable<Servico>> GetAllAsync();
+        new Task<Servico?> GetByIdAsync(int id);
     }
 }

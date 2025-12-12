@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ClinicaPro.Core.Entities;
 
-
 namespace ClinicaPro.Infrastructure.Data
 {
-    // Agora herda de IdentityDbContext para suportar autenticação e roles
     public class ClinicaDbContext : IdentityDbContext<IdentityUser>
     {
         public ClinicaDbContext(DbContextOptions<ClinicaDbContext> options) : base(options)
@@ -19,27 +17,19 @@ namespace ClinicaPro.Infrastructure.Data
         public DbSet<Consulta> Consultas { get; set; } = null!;
         public DbSet<Prontuario> Prontuarios { get; set; } = null!;
 
-        // DbSet para RH
         public DbSet<Funcionario> Funcionarios { get; set; } = null!;
-        public DbSet<Cargo> Cargos { get; set; }
+        public DbSet<Cargo> Cargos { get; set; } = null!;
 
-        // DbSet para Financeiro
-        public DbSet<ContaPagar> ContasPagar { get; set; }
-        public DbSet<ContaReceber> ContasReceber { get; set; }
-
-        public DbSet<Pagamento> Pagamentos { get; set; }
-        public DbSet<Servico> Servicos { get; set; }
-
-
-
-
-
+        public DbSet<ContaPagar> ContasPagar { get; set; } = null!;
+        public DbSet<ContaReceber> ContasReceber { get; set; } = null!;
+        public DbSet<Pagamento> Pagamentos { get; set; } = null!;
+        public DbSet<Servico> Servicos { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Chaves e relacionamentos
+            // Índices e relacionamentos
             modelBuilder.Entity<Paciente>()
                 .HasIndex(p => p.CPF)
                 .IsUnique();
@@ -63,7 +53,29 @@ namespace ClinicaPro.Infrastructure.Data
                 .WithMany(m => m.Consultas)
                 .HasForeignKey(c => c.MedicoId);
 
-            
+            // =========================================================
+            // 🔧 Correções MÍNIMAS dos warnings dos campos decimal
+            // =========================================================
+
+            modelBuilder.Entity<Cargo>()
+                .Property(c => c.Salario)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ContaPagar>()
+                .Property(c => c.Valor)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ContaReceber>()
+                .Property(c => c.Valor)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Pagamento>()
+                .Property(p => p.Valor)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Servico>()
+                .Property(s => s.ValorPadrao)
+                .HasPrecision(18, 2);
         }
     }
 }

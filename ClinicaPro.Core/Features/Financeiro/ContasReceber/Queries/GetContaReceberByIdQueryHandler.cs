@@ -1,6 +1,7 @@
 using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
 using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,10 @@ namespace ClinicaPro.Core.Features.Financeiro.ContasReceber.Queries
         public async Task<ContaReceber> Handle(GetContaReceberByIdQuery request, CancellationToken cancellationToken)
         {
             var conta = await _repository.GetByIdAsync(request.Id);
+
+            if (conta is null)
+                throw new KeyNotFoundException($"Conta a receber com ID {request.Id} não encontrada.");
+
             return conta;
         }
     }

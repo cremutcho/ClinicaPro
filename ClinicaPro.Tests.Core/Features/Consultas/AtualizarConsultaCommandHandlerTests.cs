@@ -1,11 +1,7 @@
-using Xunit;
 using Moq;
-using System.Threading.Tasks;
-using System.Threading;
 using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
 using ClinicaPro.Core.Features.Consultas.Commands;
-using System;
 
 namespace ClinicaPro.Tests.Core.Features.Consultas
 {

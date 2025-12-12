@@ -2,7 +2,7 @@ using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
 using MediatR;
 using System.Collections.Generic;
-using System.Linq; // Necessário para o Enumerable.Empty
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,12 +19,9 @@ namespace ClinicaPro.Core.Features.Consultas.Queries
 
         public async Task<IEnumerable<Consulta>> Handle(ObterTodasConsultasQuery request, CancellationToken cancellationToken)
         {
-            // 1. Executa a busca no repositório.
             var consultas = await _consultaRepository.GetAllAsync();
-            
-            // 2. ✅ CORREÇÃO DE SEGURANÇA:
-            // Garante que o retorno é uma coleção vazia se o repositório retornar null
-            // (embora GetAllAsync() devesse retornar uma coleção vazia por padrão).
+
+            // Retorna coleção vazia se o repositório retornar null
             return consultas ?? Enumerable.Empty<Consulta>();
         }
     }

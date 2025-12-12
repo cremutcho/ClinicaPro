@@ -3,6 +3,7 @@ using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace ClinicaPro.Core.Features.Consultas.Queries
 {

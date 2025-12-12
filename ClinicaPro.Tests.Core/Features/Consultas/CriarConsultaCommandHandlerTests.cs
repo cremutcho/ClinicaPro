@@ -1,12 +1,7 @@
-using Xunit;
 using Moq;
-using System.Threading.Tasks;
-using System.Threading;
 using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
 using ClinicaPro.Core.Features.Consultas.Commands;
-using System;
-using MediatR; // Adicionado para IRequest<Unit>
 
 // Adicione o using para o seu enum StatusConsulta (ou classe de valor)
 // Exemplo: using ClinicaPro.Core.Entities.Enums; 
@@ -16,9 +11,7 @@ namespace ClinicaPro.Tests.Core.Features.Consultas
 {
     public class CriarConsultaCommandHandlerTests
     {
-        // ------------------------------------------------------------------
-        // TESTE 1: CAMINHO FELIZ (SEM CONFLITO)
-        // ------------------------------------------------------------------
+        
         [Fact]
         public async Task Handle_DeveChamarAddAsync_SemConflito()
         {
