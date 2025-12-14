@@ -1,14 +1,13 @@
 using ClinicaPro.Core.Interfaces;
 using ClinicaPro.Core.Services;
-using ClinicaPro.Core; // Contém ValidationBehavior
+using ClinicaPro.Core;
 using ClinicaPro.Infrastructure.Data;
 using ClinicaPro.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MediatR; 
-using ClinicaPro.Core.Entities; 
+using MediatR;
+using ClinicaPro.Core.Entities;
 using FluentValidation;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,13 +27,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 // 🔹 INJEÇÃO DE DEPENDÊNCIA
 // =================================================================
 
-// Repositório Genérico
+// =========================
+// Repositórios Genéricos
+// =========================
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
+// =========================
 // Repositórios Específicos
+// =========================
 builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
-builder.Services.AddScoped<IEspecialidadeRepository, EspecialidadeRepository>(); 
+builder.Services.AddScoped<IEspecialidadeRepository, EspecialidadeRepository>();
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
 builder.Services.AddScoped<IConsultaRepository, ConsultaRepository>();
 builder.Services.AddScoped<ICargoRepository, CargoRepository>();
@@ -44,19 +47,31 @@ builder.Services.AddScoped<IContaReceberRepository, ContaReceberRepository>();
 builder.Services.AddScoped<IPagamentoRepository, PagamentoRepository>();
 builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
 
+// =========================
+// 🔥 SERVICES (ESSENCIAL)
+// =========================
+builder.Services.AddScoped<IPacienteService, PacienteService>();
+builder.Services.AddScoped<IMedicoService, MedicoService>();
+builder.Services.AddScoped<IConsultaService, ConsultaService>();
+// (adicione outros services conforme for refatorando)
 
-
+// =========================
 // MediatR (CQRS)
-builder.Services.AddMediatR(cfg => 
+// =========================
+builder.Services.AddMediatR(cfg =>
 {
-    cfg.RegisterServicesFromAssembly(typeof(Medico).Assembly); 
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); 
+    cfg.RegisterServicesFromAssembly(typeof(Medico).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
 });
 
-// Validação
-builder.Services.AddValidatorsFromAssembly(typeof(Medico).Assembly); 
+// =========================
+// Validações
+// =========================
+builder.Services.AddValidatorsFromAssembly(typeof(Medico).Assembly);
 
+// =========================
 // MVC
+// =========================
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -78,6 +93,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 // 🔹 Seed de roles e usuários
@@ -90,7 +106,6 @@ using (var scope = app.Services.CreateScope())
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
 
-        // 1️⃣ Roles do sistema
         string[] roles = { "Admin", "Medico", "Recepcionista", "RH" };
 
         foreach (var role in roles)
@@ -98,13 +113,12 @@ using (var scope = app.Services.CreateScope())
             if (!await roleManager.RoleExistsAsync(role))
             {
                 await roleManager.CreateAsync(new IdentityRole(role));
-                Console.WriteLine($"✅ Role criada: {role}");
             }
         }
 
-        // 2️⃣ Usuário Admin
         string adminEmail = "admin@clinicapro.com";
         string adminPass = "Admin@123";
+
         if (await userManager.FindByEmailAsync(adminEmail) == null)
         {
             var adminUser = new IdentityUser
@@ -116,30 +130,7 @@ using (var scope = app.Services.CreateScope())
 
             var result = await userManager.CreateAsync(adminUser, adminPass);
             if (result.Succeeded)
-            {
                 await userManager.AddToRoleAsync(adminUser, "Admin");
-                Console.WriteLine($"✅ Usuário Admin criado: {adminEmail} / {adminPass}");
-            }
-        }
-
-        // 3️⃣ Usuário RH
-        string rhEmail = "rh@clinicapro.com";
-        string rhPass = "RH@123";
-        if (await userManager.FindByEmailAsync(rhEmail) == null)
-        {
-            var rhUser = new IdentityUser
-            {
-                UserName = rhEmail,
-                Email = rhEmail,
-                EmailConfirmed = true
-            };
-
-            var result = await userManager.CreateAsync(rhUser, rhPass);
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(rhUser, "RH");
-                Console.WriteLine($"✅ Usuário RH criado: {rhEmail} / {rhPass}");
-            }
         }
     }
     catch (Exception ex)

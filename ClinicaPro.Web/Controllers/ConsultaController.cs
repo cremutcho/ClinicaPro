@@ -44,6 +44,18 @@ namespace ClinicaPro.Web.Controllers
             return View(consultas);
         }
 
+        // GET: Consulta/Details/5
+        [Authorize(Roles = "Admin,Medico,Recepcionista")]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var consulta = await _mediator.Send(new ObterConsultaPorIdQuery(id.Value));
+            if (consulta == null) return NotFound();
+
+            return View(consulta);
+        }
+
         // GET: Consulta/Create
         [Authorize(Roles = "Admin,Recepcionista")]
         public async Task<IActionResult> Create()
@@ -64,8 +76,17 @@ namespace ClinicaPro.Web.Controllers
                 return View(consulta);
             }
 
-            await _mediator.Send(new CriarConsultaCommand { Consulta = consulta });
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _mediator.Send(new CriarConsultaCommand { Consulta = consulta });
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("DataHora", ex.Message);
+                await PopularDropdowns(consulta);
+                return View(consulta);
+            }
         }
 
         // GET: Consulta/Edit/5
@@ -98,6 +119,13 @@ namespace ClinicaPro.Web.Controllers
             try
             {
                 await _mediator.Send(new UpdateConsultaCommand { Consulta = consulta });
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("DataHora", ex.Message);
+                await PopularDropdowns(consulta);
+                return View(consulta);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -105,8 +133,6 @@ namespace ClinicaPro.Web.Controllers
                 if (!existe) return NotFound();
                 else throw;
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: Consulta/Delete/5
@@ -138,7 +164,6 @@ namespace ClinicaPro.Web.Controllers
             var medicos = await _mediator.Send(new ObterTodosMedicosQuery());
             var servicos = await _mediator.Send(new ObterTodosServicosQuery());
 
-            // ⚡ Nomes alinhados com a view
             ViewBag.PacienteId = new SelectList(pacientes, "Id", "Nome", consulta?.PacienteId);
             ViewBag.MedicoId = new SelectList(medicos, "Id", "Nome", consulta?.MedicoId);
             ViewBag.ServicoId = new SelectList(servicos, "Id", "Nome", consulta?.ServicoId);

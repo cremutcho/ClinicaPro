@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using MediatR;
-
 using ClinicaPro.Core.Entities;
+using ClinicaPro.Core.Exceptions;
 using ClinicaPro.Core.Features.Servicos.Queries;
 using ClinicaPro.Core.Features.Servicos.Commands;
 
@@ -50,14 +50,23 @@ namespace ClinicaPro.Web.Controllers
             if (!ModelState.IsValid)
                 return View(servico);
 
-            await _mediator.Send(new CriarServicoCommand
+            try
             {
-                Nome = servico.Nome,
-                CodigoTuss = servico.CodigoTuss,
-                ValorPadrao = servico.ValorPadrao
-            });
+                await _mediator.Send(new CriarServicoCommand
+                {
+                    Nome = servico.Nome,
+                    CodigoTuss = servico.CodigoTuss,
+                    ValorPadrao = servico.ValorPadrao
+                });
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                // 🔔 Exibe mensagem de erro na view
+                ModelState.AddModelError("Nome", ex.Message);
+                return View(servico);
+            }
         }
 
         // GET: /Servicos/Edit/5
@@ -82,13 +91,22 @@ namespace ClinicaPro.Web.Controllers
             if (!ModelState.IsValid)
                 return View(servico);
 
-            await _mediator.Send(new UpdateServicoCommand
+            try
             {
-                Id = servico.Id,
-                Nome = servico.Nome
-            });
+                await _mediator.Send(new UpdateServicoCommand
+                {
+                    Id = servico.Id,
+                    Nome = servico.Nome
+                });
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                // 🔔 Exibe mensagem de erro na view
+                ModelState.AddModelError("Nome", ex.Message);
+                return View(servico);
+            }
         }
 
         // GET: /Servicos/Delete/5
@@ -108,7 +126,6 @@ namespace ClinicaPro.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _mediator.Send(new DeleteServicoCommand { Id = id });
-
             return RedirectToAction(nameof(Index));
         }
     }

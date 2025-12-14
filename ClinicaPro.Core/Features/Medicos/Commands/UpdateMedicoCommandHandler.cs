@@ -1,39 +1,23 @@
-// ClinicaPro.Core/Features/Medicos/Commands/UpdateMedicoCommandHandler.cs
+using ClinicaPro.Core.Interfaces;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using ClinicaPro.Core.Entities;
-using ClinicaPro.Core.Interfaces;
-using System.Collections.Generic; // Para KeyNotFoundException
 
 namespace ClinicaPro.Core.Features.Medicos.Commands
 {
-    public class UpdateMedicoCommandHandler : IRequestHandler<UpdateMedicoCommand, Unit>
+    public class UpdateMedicoCommandHandler 
+        : IRequestHandler<UpdateMedicoCommand, Unit>
     {
-        private readonly IMedicoRepository _medicoRepository;
+        private readonly IMedicoService _medicoService;
 
-        public UpdateMedicoCommandHandler(IMedicoRepository medicoRepository)
+        public UpdateMedicoCommandHandler(IMedicoService medicoService)
         {
-            _medicoRepository = medicoRepository;
+            _medicoService = medicoService;
         }
 
         public async Task<Unit> Handle(UpdateMedicoCommand request, CancellationToken cancellationToken)
         {
-            var medico = await _medicoRepository.GetByIdAsync(request.Id);
-
-            if (medico == null)
-            {
-                throw new KeyNotFoundException($"Médico com ID {request.Id} não encontrado.");
-            }
-
-            medico.Nome = request.Nome;
-            medico.CRM = request.CRM;
-            medico.EspecialidadeId = request.EspecialidadeId;
-            medico.Email = request.Email;
-            medico.Telefone = request.Telefone;
-
-            await _medicoRepository.UpdateAsync(medico);
-
+            await _medicoService.AtualizarAsync(request.Medico);
             return Unit.Value;
         }
     }

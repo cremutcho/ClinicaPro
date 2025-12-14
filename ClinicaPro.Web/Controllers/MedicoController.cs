@@ -1,14 +1,11 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using MediatR;
-using System.Collections.Generic; // Para KeyNotFoundException
 using ClinicaPro.Core.Entities;
+using ClinicaPro.Core.Exceptions;
 
-// Usings para Queries e Commands
+// Queries e Commands
 using ClinicaPro.Core.Features.Medicos.Queries;
 using ClinicaPro.Core.Features.Medicos.Commands;
 using ClinicaPro.Core.Features.Especialidades.Queries;
@@ -33,11 +30,12 @@ namespace ClinicaPro.Web.Controllers
         }
 
         // GET: Medico/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null) return NotFound();
-            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id.Value));
-            if (medico == null) return NotFound();
+            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id));
+            if (medico == null)
+                return NotFound();
+
             return View(medico);
         }
 
@@ -49,100 +47,97 @@ namespace ClinicaPro.Web.Controllers
             return View();
         }
 
-        // POST: Medico/Create - CORREÇÃO FINAL BASEADA NO ERRO CS9035
+        // POST: Medico/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nome,CRM,EspecialidadeId,Email,Telefone")] Medico medico)
+        public async Task<IActionResult> Create(Medico medico)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // SOLUÇÃO DEFINITIVA: O compilador exige que a propriedade 'Medico' seja definida.
-                var command = new CriarMedicoCommand 
-                {
-                    Medico = medico
-                };
-
-                await _mediator.Send(command);
-                return RedirectToAction(nameof(Index));
+                await CarregarEspecialidades(medico.EspecialidadeId);
+                return View(medico);
             }
 
-            var especialidades = await _mediator.Send(new ObterTodasEspecialidadesQuery());
-            ViewBag.EspecialidadeId = new SelectList(especialidades, "Id", "Nome", medico.EspecialidadeId);
-            return View(medico);
+            try
+            {
+                await _mediator.Send(new CriarMedicoCommand { Medico = medico });
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                // 🔔 CRM duplicado
+                ModelState.AddModelError("CRM", ex.Message);
+                await CarregarEspecialidades(medico.EspecialidadeId);
+                return View(medico);
+            }
         }
 
         // GET: Medico/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null) return NotFound();
+            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id));
+            if (medico == null)
+                return NotFound();
 
-            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id.Value));
-            if (medico == null) return NotFound();
-
-            var especialidades = await _mediator.Send(new ObterTodasEspecialidadesQuery());
-            ViewBag.EspecialidadeId = new SelectList(especialidades, "Id", "Nome", medico.EspecialidadeId);
+            await CarregarEspecialidades(medico.EspecialidadeId);
             return View(medico);
         }
 
         // POST: Medico/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,CRM,EspecialidadeId,Email,Telefone")] Medico medico)
+        public async Task<IActionResult> Edit(int id, Medico medico)
         {
-            if (id != medico.Id) return NotFound();
+            if (id != medico.Id)
+                return BadRequest();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    // UpdateMedicoCommand mantido com inicializador de objeto
-                    var command = new UpdateMedicoCommand
-                    {
-                        Id = medico.Id,
-                        Nome = medico.Nome,
-                        CRM = medico.CRM,
-                        EspecialidadeId = medico.EspecialidadeId,
-                        Email = medico.Email,
-                        Telefone = medico.Telefone
-                    };
-                    await _mediator.Send(command);
-                }
-                catch (KeyNotFoundException)
-                {
-                    return NotFound();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    var existe = await _mediator.Send(new MedicoExisteQuery(medico.Id));
-                    if (!existe) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
+                await CarregarEspecialidades(medico.EspecialidadeId);
+                return View(medico);
             }
 
-            var especialidades = await _mediator.Send(new ObterTodasEspecialidadesQuery());
-            ViewBag.EspecialidadeId = new SelectList(especialidades, "Id", "Nome", medico.EspecialidadeId);
-            return View(medico);
+            try
+            {
+                await _mediator.Send(new UpdateMedicoCommand { Medico = medico });
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                // 🔔 CRM duplicado
+                ModelState.AddModelError("CRM", ex.Message);
+                await CarregarEspecialidades(medico.EspecialidadeId);
+                return View(medico);
+            }
         }
 
         // GET: Medico/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return NotFound();
-
-            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id.Value));
-            if (medico == null) return NotFound();
+            var medico = await _mediator.Send(new ObterMedicoPorIdQuery(id));
+            if (medico == null)
+                return NotFound();
 
             return View(medico);
         }
 
-        // POST: Medico/Delete/5
+        // POST: Medico/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _mediator.Send(new DeleteMedicoCommand(id));
             return RedirectToAction(nameof(Index));
+        }
+
+        // ================================
+        // 🔧 MÉTODO AUXILIAR
+        // ================================
+        private async Task CarregarEspecialidades(int? especialidadeId = null)
+        {
+            var especialidades = await _mediator.Send(new ObterTodasEspecialidadesQuery());
+            ViewBag.EspecialidadeId =
+                new SelectList(especialidades, "Id", "Nome", especialidadeId);
         }
     }
 }

@@ -1,43 +1,61 @@
 using ClinicaPro.Core.Entities;
+using ClinicaPro.Core.Exceptions;
 using ClinicaPro.Core.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Services
 {
-    public class PacienteService : BaseService<Paciente>, IPacienteService
+    public class PacienteService : IPacienteService
     {
-        private readonly IRepository<Paciente> _pacienteRepository;
+        private readonly IPacienteRepository _repository;
 
-        public PacienteService(IRepository<Paciente> pacienteRepository)
-            : base(pacienteRepository)
+        public PacienteService(IPacienteRepository repository)
         {
-            _pacienteRepository = pacienteRepository;
+            _repository = repository;
         }
 
-        // Métodos específicos de Paciente
-        public async Task<IEnumerable<Paciente>> GetByNomeAsync(string nome)
+        // =========================
+        // CREATE
+        // =========================
+        public async Task<Paciente> CriarAsync(Paciente paciente)
         {
-            var all = await _pacienteRepository.GetAllAsync();
-            return all.Where(p => p.Nome.Contains(nome, StringComparison.OrdinalIgnoreCase));
+            var pacienteExistente = await _repository.GetByCPFAsync(paciente.CPF);
+
+            if (pacienteExistente != null)
+                throw new BusinessException("Já existe um paciente cadastrado com este CPF.");
+
+            await _repository.AddAsync(paciente);
+            return paciente;
         }
 
-        // 🔍 Método temporário para testar se o banco está salvando corretamente
-        public async Task TesteConexaoAsync()
-        {
-            var novo = new Paciente
-            {
-                Nome = "Teste " + DateTime.Now.ToString("HHmmss"),
-                CPF = "00000000000",
-                DataNascimento = DateTime.Now.AddYears(-30),
-                Endereco = "Rua de Teste 123",
-                Telefone = "999999999",
-                Email = "teste" + DateTime.Now.ToString("HHmmss") + "@teste.com"
-            };
+        // =========================
+        // READ
+        // =========================
+        public async Task<IEnumerable<Paciente>> ObterTodosAsync()
+            => await _repository.GetAllAsync();
 
-            await _pacienteRepository.AddAsync(novo);
+        public async Task<Paciente?> ObterPorIdAsync(int id)
+            => await _repository.GetByIdAsync(id);
+
+        // =========================
+        // UPDATE
+        // =========================
+        public async Task AtualizarPacienteAsync(Paciente paciente)
+        {
+            var pacienteComMesmoCpf = await _repository.GetByCPFAsync(paciente.CPF);
+
+            // 🔒 REGRA: CPF não pode se repetir entre pacientes diferentes
+            if (pacienteComMesmoCpf != null && pacienteComMesmoCpf.Id != paciente.Id)
+                throw new BusinessException("Já existe um paciente cadastrado com este CPF.");
+
+            await _repository.UpdateAsync(paciente);
         }
+
+        // =========================
+        // DELETE
+        // =========================
+        public async Task ExcluirPacienteAsync(int id)
+            => await _repository.DeleteAsync(id);
     }
 }

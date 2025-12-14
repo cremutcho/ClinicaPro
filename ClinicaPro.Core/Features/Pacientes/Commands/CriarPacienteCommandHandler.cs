@@ -1,27 +1,22 @@
-// ClinicaPro.Core/Features/Pacientes/Commands/CriarPacienteCommandHandler.cs
 using ClinicaPro.Core.Entities;
+using ClinicaPro.Core.Features.Pacientes.Commands;
 using ClinicaPro.Core.Interfaces;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ClinicaPro.Core.Features.Pacientes.Commands
+public class CriarPacienteCommandHandler
+    : IRequestHandler<CriarPacienteCommand, Paciente>
 {
-    public class CriarPacienteCommandHandler : IRequestHandler<CriarPacienteCommand, Paciente>
+    private readonly IPacienteService _pacienteService;
+
+    public CriarPacienteCommandHandler(IPacienteService pacienteService)
     {
-        private readonly IPacienteRepository _pacienteRepository;
+        _pacienteService = pacienteService;
+    }
 
-        public CriarPacienteCommandHandler(IPacienteRepository pacienteRepository)
-        {
-            _pacienteRepository = pacienteRepository;
-        }
-
-        public async Task<Paciente> Handle(CriarPacienteCommand request, CancellationToken cancellationToken)
-        {
-            // O handler simplesmente delega a operação de escrita para o repositório
-            await _pacienteRepository.AddAsync(request.Paciente);
-            
-            return request.Paciente; // Retorna o objeto adicionado
-        }
+    public async Task<Paciente> Handle(
+        CriarPacienteCommand request,
+        CancellationToken cancellationToken)
+    {
+        return await _pacienteService.CriarAsync(request.Paciente);
     }
 }

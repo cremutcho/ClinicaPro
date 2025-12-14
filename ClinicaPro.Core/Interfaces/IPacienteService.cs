@@ -4,11 +4,12 @@ using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Interfaces
 {
-    public interface IPacienteService : IBaseService<Paciente>
+    public interface IPacienteService
     {
-        // Métodos específicos de Paciente
-        Task<IEnumerable<Paciente>> GetByNomeAsync(string nome);
-
-        Task TesteConexaoAsync();
+        Task<Paciente> CriarAsync(Paciente paciente);
+        Task<IEnumerable<Paciente>> ObterTodosAsync();
+        Task<Paciente?> ObterPorIdAsync(int id);
+        Task AtualizarPacienteAsync(Paciente paciente);
+        Task ExcluirPacienteAsync(int id);
     }
 }

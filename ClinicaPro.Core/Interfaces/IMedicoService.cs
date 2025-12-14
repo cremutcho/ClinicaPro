@@ -4,8 +4,12 @@ using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Interfaces
 {
-    public interface IMedicoService : IBaseService<Medico>
+    public interface IMedicoService
     {
-        Task<IEnumerable<Medico>> GetByEspecialidadeAsync(string especialidade);
+        Task CriarAsync(Medico medico);
+        Task AtualizarAsync(Medico medico);
+        Task<IEnumerable<Medico>> ObterTodosAsync();
+        Task<Medico?> ObterPorIdAsync(int id);
+        Task ExcluirAsync(int id);
     }
 }

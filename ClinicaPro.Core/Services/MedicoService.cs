@@ -1,29 +1,47 @@
 using ClinicaPro.Core.Entities;
+using ClinicaPro.Core.Exceptions;
 using ClinicaPro.Core.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Services
 {
-    public class MedicoService : BaseService<Medico>, IMedicoService
-
+    public class MedicoService : IMedicoService
     {
-        private readonly IRepository<Medico> _medicoRepository;
+        private readonly IMedicoRepository _repository;
 
-        public MedicoService(IRepository<Medico> medicoRepository) : base(medicoRepository)
+        public MedicoService(IMedicoRepository repository)
         {
-            _medicoRepository = medicoRepository;
+            _repository = repository;
         }
 
-        // Métodos específicos de Médico
-        public async Task<IEnumerable<Medico>> GetByEspecialidadeAsync(string especialidade)
+        public async Task CriarAsync(Medico medico)
         {
-            var all = await _medicoRepository.GetAllAsync();
-            return all.Where(m =>
-                m.Especialidade != null &&
-                m.Especialidade.Nome.Contains(especialidade, StringComparison.OrdinalIgnoreCase));
+            var existente = await _repository.GetByCRMAsync(medico.CRM);
+
+            if (existente != null)
+                throw new BusinessException("Já existe um médico cadastrado com este CRM.");
+
+            await _repository.AddAsync(medico);
         }
 
+        public async Task AtualizarAsync(Medico medico)
+        {
+            var existente = await _repository.GetByCRMAsync(medico.CRM);
+
+            if (existente != null && existente.Id != medico.Id)
+                throw new BusinessException("Já existe outro médico cadastrado com este CRM.");
+
+            await _repository.UpdateAsync(medico);
+        }
+
+        public async Task<IEnumerable<Medico>> ObterTodosAsync()
+            => await _repository.GetAllAsync();
+
+        public async Task<Medico?> ObterPorIdAsync(int id)
+            => await _repository.GetByIdAsync(id);
+
+        public async Task ExcluirAsync(int id)
+            => await _repository.DeleteAsync(id);
     }
 }
