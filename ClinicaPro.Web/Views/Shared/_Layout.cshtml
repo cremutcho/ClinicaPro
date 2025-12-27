@@ -3,6 +3,7 @@
 @inject UserManager<IdentityUser> UserManager
 
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
@@ -41,11 +42,20 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
 
+        .sidebar .menu-header {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px 20px 5px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        /* MUDANÇA AQUI: Aumentei a margem esquerda para 260px */
         .content {
-            margin-left: 240px;
+            margin-left: 260px; /* Era 240px */
             padding: 20px;
         }
     </style>
+
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
 
@@ -94,8 +104,15 @@
         {
             if (User.IsInRole("Admin"))
             {
-                <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a> 
-                
+<!-- 🚀 NOVO: Seção de RH e Configurações -->
+<div class="menu-header mt-3">Recursos Humanos</div>
+                <a asp-controller="Funcionario" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Funcionários</a>
+                <a asp-controller="Cargo" asp-action="Index"><i class="bi bi-briefcase-fill me-2"></i>Cargos</a>
+<a asp-controller="Departamento" asp-action="Index"><i class="bi bi-building-fill me-2"></i>Departamentos</a>
+
+            <div class="menu-header mt-3">Gestão Clínica</div>
+
+
                 <a asp-controller="Pacientes" asp-action="Index"><i class="bi bi-person-fill me-2"></i>Pacientes</a>
                 <a asp-controller="Medico" asp-action="Index"><i class="bi bi-people-fill me-2"></i>Médicos</a>
                 <a asp-controller="Consulta" asp-action="Index"><i class="bi bi-calendar-check-fill me-2"></i>Consultas</a>
@@ -118,7 +135,7 @@
 
     <footer class="bg-white text-center text-muted py-3 border-top mt-auto">
         <div class="container">
-            &copy; 2025 - <strong>ClinicaPro</strong> - 
+            © 2025 - <strong>ClinicaPro</strong> -
             <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Política de Privacidade</a>
         </div>
     </footer>
@@ -127,5 +144,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
