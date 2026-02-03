@@ -1,4 +1,3 @@
-// ClinicaPro.Core/Features/Pacientes/Commands/CriarPacienteCommand.cs
 using ClinicaPro.Core.Entities;
 using MediatR;
 

@@ -19,7 +19,7 @@ namespace ClinicaPro.Core.Entities
         public int MedicoId { get; set; }
         public Medico? Medico { get; set; }
 
-        public int? ServicoId { get; set; }          // NOVO
+        public int? ServicoId { get; set; }          
         public Servico? Servico { get; set; }
 
         public string? Observacoes { get; set; }
