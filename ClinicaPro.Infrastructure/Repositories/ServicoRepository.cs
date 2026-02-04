@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClinicaPro.Infrastructure.Repositories
 {
-    public class ServicoRepository : Repository<Servico>, IServicoRepository
+    public class ServicoRepository : Repository<Servico, int>, IServicoRepository
     {
         public ServicoRepository(ClinicaDbContext context)
             : base(context)

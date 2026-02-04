@@ -9,8 +9,8 @@ using System; // Necessário para DateTime
 
 namespace ClinicaPro.Infrastructure.Repositories
 {
-    // A classe herda de Repository<Consulta> e implementa IConsultaRepository
-    public class ConsultaRepository : Repository<Consulta>, IConsultaRepository
+    // A classe herda de Repository<Consulta, int> e implementa IConsultaRepository
+    public class ConsultaRepository : Repository<Consulta, int>, IConsultaRepository
     {
         public ConsultaRepository(ClinicaDbContext context) : base(context)
         {

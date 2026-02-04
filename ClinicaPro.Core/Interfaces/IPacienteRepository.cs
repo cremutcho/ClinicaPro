@@ -4,7 +4,7 @@ using ClinicaPro.Core.Entities;
 
 namespace ClinicaPro.Core.Interfaces
 {
-    public interface IPacienteRepository : IRepository<Paciente>
+    public interface IPacienteRepository : IRepository<Paciente, int>
     {
         Task<Paciente?> GetByCPFAsync(string cpf);
 

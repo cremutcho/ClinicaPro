@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace ClinicaPro.Infrastructure.Repositories
 {
-    public class PacienteRepository : Repository<Paciente>, IPacienteRepository
+    public class PacienteRepository : Repository<Paciente, int>, IPacienteRepository
+
     {
         public PacienteRepository(ClinicaDbContext context) : base(context)
         {

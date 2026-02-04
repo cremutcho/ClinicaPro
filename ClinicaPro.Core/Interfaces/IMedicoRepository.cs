@@ -4,7 +4,7 @@ using ClinicaPro.Core.Entities;
 
 namespace ClinicaPro.Core.Interfaces
 {
-    public interface IMedicoRepository : IRepository<Medico>
+    public interface IMedicoRepository : IRepository<Medico, int>
     {
         Task<Medico?> GetByCRMAsync(string crm);
         Task<IEnumerable<Medico>> GetByEspecialidadeAsync(int especialidadeId);

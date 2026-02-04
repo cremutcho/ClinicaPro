@@ -24,10 +24,13 @@ namespace ClinicaPro.Infrastructure.Data
         public DbSet<ContaReceber> ContasReceber { get; set; } = null!;
         public DbSet<Pagamento> Pagamentos { get; set; } = null!;
         public DbSet<Servico> Servicos { get; set; } = null!;
+        public DbSet<ConvenioMedico> ConveniosMedicos { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ClinicaDbContext).Assembly);
 
             // Índices e relacionamentos
             modelBuilder.Entity<Paciente>()
@@ -52,6 +55,8 @@ namespace ClinicaPro.Infrastructure.Data
                 .HasOne(c => c.Medico)
                 .WithMany(m => m.Consultas)
                 .HasForeignKey(c => c.MedicoId);
+
+
 
             // =========================================================
             // 🔧 Correções MÍNIMAS dos warnings dos campos decimal

@@ -18,11 +18,11 @@ namespace ClinicaPro.Core.Features.Consultas.Commands
 
         public async Task<Unit> Handle(UpdateConsultaCommand request, CancellationToken cancellationToken)
         {
-            // Verifica conflito de horário, ignorando a própria consulta
-            var conflito = await _consultaService.VerificaConflitoHorarioAsync(
+            // ⚠️ Ajuste: usar o método correto da interface
+            var conflito = await _consultaService.VerificaConflitoHorario(
                 request.Consulta.MedicoId,
-                request.Consulta.DataHora,
-                request.Consulta.Id);
+                request.Consulta.DataHora
+            );
 
             if (conflito)
                 throw new InvalidOperationException("Conflito de horário: O médico já tem uma consulta neste horário.");

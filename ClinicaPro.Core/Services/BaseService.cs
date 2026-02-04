@@ -1,14 +1,12 @@
 using ClinicaPro.Core.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Services
 {
-    public class BaseService<T> where T : class
+    public class BaseService<T, TId> where T : class
     {
-        protected readonly IRepository<T> _repository;
+        protected readonly IRepository<T, TId> _repository;
 
-        public BaseService(IRepository<T> repository)
+        public BaseService(IRepository<T, TId> repository)
         {
             _repository = repository;
         }
@@ -18,7 +16,7 @@ namespace ClinicaPro.Core.Services
             return await _repository.GetAllAsync();
         }
 
-        public virtual async Task<T?> GetByIdAsync(int id)
+        public virtual async Task<T?> GetByIdAsync(TId id)
         {
             return await _repository.GetByIdAsync(id);
         }
@@ -33,7 +31,7 @@ namespace ClinicaPro.Core.Services
             await _repository.UpdateAsync(entity);
         }
 
-        public virtual async Task DeleteAsync(int id)
+        public virtual async Task DeleteAsync(TId id)
         {
             await _repository.DeleteAsync(id);
         }

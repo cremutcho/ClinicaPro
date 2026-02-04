@@ -1,0 +1,44 @@
+@model ClinicaPro.Core.Entities.ConvenioMedico
+
+@{
+    ViewData["Title"] = "Excluir Convênio";
+}
+
+<h2 class="mt-5 mb-4">Excluir Convênio</h2>
+
+<div class="alert alert-danger">
+    Tem certeza que deseja excluir este convênio?
+</div>
+
+<div class="card p-4 mb-3">
+    <dl class="row">
+
+        <dt class="col-sm-3">Nome</dt>
+        <dd class="col-sm-9">@Model.Nome</dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">
+            @(Model.Ativo ? "Ativo" : "Inativo")
+        </dd>
+
+        <dt class="col-sm-3">Data Cadastro</dt>
+        <dd class="col-sm-9">
+            @Model.DataCadastro.ToString("dd/MM/yyyy")
+        </dd>
+
+    </dl>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    @Html.AntiForgeryToken()
+
+    <button type="submit" class="btn btn-danger">
+        <i class="bi bi-trash"></i> Excluir
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Cancelar
+    </a>
+</form>

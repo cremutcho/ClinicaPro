@@ -7,23 +7,19 @@ using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Services
 {
-    public class ConsultaService : BaseService<Consulta>, IConsultaService
+    public class ConsultaService : IConsultaService
     {
-        private readonly IRepository<Consulta> _consultaRepository;
+        private readonly IRepository<Consulta, Guid> _consultaRepository;
 
-        public ConsultaService(IRepository<Consulta> consultaRepository) : base(consultaRepository)
+        public ConsultaService(IRepository<Consulta, Guid> consultaRepository)
         {
             _consultaRepository = consultaRepository;
         }
 
-        // =====================================
-        // ✅ Implementando todos os métodos da interface
-        // =====================================
-
-        // Criar consulta com verificação de conflito
         public async Task<Consulta> CriarAsync(Consulta consulta)
         {
-            var conflito = await VerificaConflitoHorarioAsync(consulta.MedicoId, consulta.DataHora);
+            var conflito = await VerificaConflitoHorario(consulta.MedicoId, consulta.DataHora);
+
             if (conflito)
                 throw new InvalidOperationException("Conflito de horário: O médico já tem uma consulta neste horário.");
 
@@ -31,43 +27,37 @@ namespace ClinicaPro.Core.Services
             return consulta;
         }
 
-        // Atualizar consulta com verificação de conflito
-        public async Task AtualizarAsync(Consulta consulta)
+        public async Task<Consulta> AtualizarAsync(Consulta consulta)
         {
-            var conflito = await VerificaConflitoHorarioAsync(consulta.MedicoId, consulta.DataHora, consulta.Id);
+            var conflito = await VerificaConflitoHorario(consulta.MedicoId, consulta.DataHora);
+
             if (conflito)
                 throw new InvalidOperationException("Conflito de horário: O médico já tem uma consulta neste horário.");
 
             await _consultaRepository.UpdateAsync(consulta);
+            return consulta;
         }
 
-        // Excluir consulta
-        public async Task ExcluirAsync(int id)
+        public async Task ExcluirAsync(Guid id)
         {
             await _consultaRepository.DeleteAsync(id);
         }
 
-        // Consultas por paciente
-        public async Task<IEnumerable<Consulta>> GetByPacienteIdAsync(int pacienteId)
+        public async Task<Consulta?> BuscarPorIdAsync(Guid id)
         {
-            var todas = await _consultaRepository.GetAllAsync();
-            return todas.Where(c => c.PacienteId == pacienteId);
+            return await _consultaRepository.GetByIdAsync(id);
         }
 
-        // Consultas por médico
-        public async Task<IEnumerable<Consulta>> GetByMedicoIdAsync(int medicoId)
+        public async Task<List<Consulta>> ListarAsync()
         {
             var todas = await _consultaRepository.GetAllAsync();
-            return todas.Where(c => c.MedicoId == medicoId);
+            return todas.ToList();
         }
 
-        // Verificar conflito de horário
-        public async Task<bool> VerificaConflitoHorarioAsync(int medicoId, DateTime dataHora, int? consultaId = null)
+        public async Task<bool> VerificaConflitoHorario(int medicoId, DateTime dataHora)
         {
             var todas = await _consultaRepository.GetAllAsync();
-            return todas.Any(c => c.MedicoId == medicoId 
-                               && c.DataHora == dataHora
-                               && (!consultaId.HasValue || c.Id != consultaId.Value));
+            return todas.Any(c => c.MedicoId == medicoId && c.DataHora == dataHora);
         }
     }
 }

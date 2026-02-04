@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace ClinicaPro.Infrastructure.Repositories
 {
-    public class MedicoRepository : Repository<Medico>, IMedicoRepository
+    public class MedicoRepository : Repository<Medico, int>, IMedicoRepository
+
     {
         public MedicoRepository(ClinicaDbContext context) : base(context)
         {
@@ -43,12 +44,6 @@ namespace ClinicaPro.Infrastructure.Repositories
                 .Where(m => m.EspecialidadeId == especialidadeId)
                 .Include(m => m.Especialidade) // ✅ Incluído para consistência
                 .ToListAsync();
-        }
-
-        // ✅ Novo método garantido para dropdown funcionar perfeitamente
-        Task<IEnumerable<Medico>> IMedicoRepository.GetAllAsync()
-        {
-            return GetAllAsync();
         }
     }
 }

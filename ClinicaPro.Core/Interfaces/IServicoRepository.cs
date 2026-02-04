@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Interfaces
 {
-    public interface IServicoRepository : IRepository<Servico>
+    public interface IServicoRepository : IRepository<Servico, int>
     {
         // 🔥 'new' indica que estamos ocultando o método da interface base
         new Task<IEnumerable<Servico>> GetAllAsync();

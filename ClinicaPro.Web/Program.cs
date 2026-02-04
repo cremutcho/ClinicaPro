@@ -1,13 +1,14 @@
+using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
 using ClinicaPro.Core.Services;
-using ClinicaPro.Core;
 using ClinicaPro.Infrastructure.Data;
 using ClinicaPro.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
-using ClinicaPro.Core.Entities;
 using FluentValidation;
+using ClinicaPro.Core.Features.ConvenioMedico.Commands;
+using ClinicaPro.Core.Features.ConvenioMedico.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +31,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 // =========================
 // Repositórios Genéricos
 // =========================
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 // =========================
@@ -46,28 +47,29 @@ builder.Services.AddScoped<IContaPagarRepository, ContaPagarRepository>();
 builder.Services.AddScoped<IContaReceberRepository, ContaReceberRepository>();
 builder.Services.AddScoped<IPagamentoRepository, PagamentoRepository>();
 builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
+builder.Services.AddScoped<IConvenioMedicoRepository, ConvenioMedicoRepository>();
 
 // =========================
-// 🔥 SERVICES (ESSENCIAL)
+// Services
 // =========================
 builder.Services.AddScoped<IPacienteService, PacienteService>();
 builder.Services.AddScoped<IMedicoService, MedicoService>();
 builder.Services.AddScoped<IConsultaService, ConsultaService>();
-// (adicione outros services conforme for refatorando)
+builder.Services.AddScoped<IConvenioMedicoService, ConvenioMedicoService>();
 
 // =========================
-// MediatR (CQRS)
+// MediatR (CQRS) - REGISTRA HANDLERS
 // =========================
 builder.Services.AddMediatR(cfg =>
 {
-    cfg.RegisterServicesFromAssembly(typeof(Medico).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    // Registrando todos os Handlers do assembly de ConvenioMedico
+    cfg.RegisterServicesFromAssembly(typeof(CriarConvenioMedicoCommandHandler).Assembly);
 });
 
 // =========================
 // Validações
 // =========================
-builder.Services.AddValidatorsFromAssembly(typeof(Medico).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(CriarConvenioMedicoCommandValidator).Assembly);
 
 // =========================
 // MVC
@@ -111,9 +113,7 @@ using (var scope = app.Services.CreateScope())
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))
-            {
                 await roleManager.CreateAsync(new IdentityRole(role));
-            }
         }
 
         string adminEmail = "admin@clinicapro.com";

@@ -1,0 +1,45 @@
+@model ClinicaPro.Core.Entities.ConvenioMedico
+
+@{
+    ViewData["Title"] = "Novo Convênio";
+}
+
+<h2 class="mb-4">Novo Convênio</h2>
+
+<form asp-action="Create" method="post">
+
+    <div class="card p-4 shadow-sm">
+
+        <!-- Nome -->
+        <div class="mb-3">
+            <label asp-for="Nome" class="form-label fw-semibold"></label>
+            <input asp-for="Nome" class="form-control" placeholder="Digite o nome do convênio" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+
+        <!-- Ativo -->
+        <div class="form-check mb-3">
+            <input asp-for="Ativo" class="form-check-input" />
+            <label asp-for="Ativo" class="form-check-label"></label>
+        </div>
+
+        <!-- Botões -->
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> Salvar
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+
+    </div>
+
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
