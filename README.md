@@ -88,6 +88,12 @@ O sistema possui módulos completos e testados, sendo continuamente evoluído co
 
 ---
 
+🔹 Principais evoluções documentadas nos Pull Requests:
+
+[Módulo de Convênios Médicos](link do PR)
+
+[Associação Convênio ↔ Consulta](link do PR)
+
 ## 👨‍💻 Autor
 
 Projeto desenvolvido por **Andre Correia**  
