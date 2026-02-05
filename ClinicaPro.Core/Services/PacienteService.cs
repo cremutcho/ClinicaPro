@@ -20,9 +20,9 @@ namespace ClinicaPro.Core.Services
         // =========================
         public async Task<Paciente> CriarAsync(Paciente paciente)
         {
-            var pacienteExistente = await _repository.GetByCPFAsync(paciente.CPF);
+            var existente = await _repository.GetByCPFAsync(paciente.CPF);
 
-            if (pacienteExistente != null)
+            if (existente != null)
                 throw new BusinessException("Já existe um paciente cadastrado com este CPF.");
 
             await _repository.AddAsync(paciente);
@@ -39,16 +39,16 @@ namespace ClinicaPro.Core.Services
             => await _repository.GetByIdAsync(id);
 
         // =========================
-        // UPDATE
+        // UPDATE (✅ SEM CONFLITO EF)
         // =========================
         public async Task AtualizarPacienteAsync(Paciente paciente)
         {
             var pacienteComMesmoCpf = await _repository.GetByCPFAsync(paciente.CPF);
 
-            // 🔒 REGRA: CPF não pode se repetir entre pacientes diferentes
             if (pacienteComMesmoCpf != null && pacienteComMesmoCpf.Id != paciente.Id)
                 throw new BusinessException("Já existe um paciente cadastrado com este CPF.");
 
+            // ✔️ delega para o Repository (que já está corrigido)
             await _repository.UpdateAsync(paciente);
         }
 

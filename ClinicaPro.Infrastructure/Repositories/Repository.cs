@@ -31,8 +31,36 @@ namespace ClinicaPro.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        // =========================
+        // 🔥 UPDATE CORRIGIDO
+        // =========================
         public async Task UpdateAsync(T entity)
         {
+            // 🔹 Obtém o Id da entidade dinamicamente
+            var key = _context.Model
+                .FindEntityType(typeof(T))!
+                .FindPrimaryKey()!
+                .Properties
+                .First();
+
+            var keyValue = typeof(T)
+                .GetProperty(key.Name)!
+                .GetValue(entity);
+
+            // 🔹 Verifica se já existe entidade rastreada com o mesmo Id
+            var trackedEntity = _context.ChangeTracker
+                .Entries<T>()
+                .FirstOrDefault(e =>
+                    e.Property(key.Name).CurrentValue!.Equals(keyValue)
+                );
+
+            if (trackedEntity != null)
+            {
+                // 🧹 Remove a entidade antiga do ChangeTracker
+                trackedEntity.State = EntityState.Detached;
+            }
+
+            // ✅ Agora é seguro atualizar
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }

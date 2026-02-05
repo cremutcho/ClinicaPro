@@ -1,59 +1,109 @@
-@model ClinicaPro.Core.Entities.Consulta
+@model ClinicaPro.Web.Models.ConsultaFormViewModel
 
 @{
     ViewData["Title"] = "Editar Consulta";
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+<h2>@ViewData["Title"]</h2>
 
-<div class="card shadow-sm p-4">
-    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
 
-    <form asp-action="Edit" method="post" class="row g-3">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Id" />
 
-        <div class="col-md-6">
-            <label asp-for="DataHora" class="form-label"></label>
-            <input asp-for="DataHora" type="datetime-local" class="form-control" />
-            <span asp-validation-for="DataHora" class="text-danger"></span>
-        </div>
+            <!-- Data e Hora -->
+            <div class="mb-3">
+                <label asp-for="DataHora" class="form-label">Data e Hora</label>
+                <input asp-for="DataHora" type="datetime-local" class="form-control" />
+                <span asp-validation-for="DataHora" class="text-danger"></span>
+            </div>
 
-        <div class="col-md-6">
-            <label asp-for="Status" class="form-label"></label>
-            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ClinicaPro.Core.Entities.StatusConsulta>()"></select>
-            <span asp-validation-for="Status" class="text-danger"></span>
-        </div>
+            <!-- Status -->
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Agendada" selected="@Model.Status == StatusConsulta.Agendada">Agendada</option>
+                    <option value="Concluida" selected="@Model.Status == StatusConsulta.Concluida">Concluída</option>
+                    <option value="Cancelada" selected="@Model.Status == StatusConsulta.Cancelada">Cancelada</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
 
-        <div class="col-md-6">
-            <label asp-for="PacienteId" class="form-label"></label>
-            <select asp-for="PacienteId" class="form-select" asp-items="ViewBag.PacienteId">
-                <option value="">-- Selecione o paciente --</option>
-            </select>
-            <span asp-validation-for="PacienteId" class="text-danger"></span>
-        </div>
+            <!-- Tipo de Atendimento -->
+            <div class="mb-3">
+                <label asp-for="TipoAtendimento" class="form-label">Tipo de Atendimento</label>
+                <select asp-for="TipoAtendimento" class="form-select" id="tipoAtendimento">
+                    <option value="Particular" selected="@Model.TipoAtendimento == "Particular"">Particular</option>
+                    <option value="Convenio" selected="@Model.TipoAtendimento == "Convenio"">Convênio</option>
+                </select>
+            </div>
 
-        <div class="col-md-6">
-            <label asp-for="MedicoId" class="form-label"></label>
-            <select asp-for="MedicoId" class="form-select" asp-items="ViewBag.MedicoId">
-                <option value="">-- Selecione o médico --</option>
-            </select>
-            <span asp-validation-for="MedicoId" class="text-danger"></span>
-        </div>
+            <!-- Convênio (aparece apenas se TipoAtendimento = Convenio) -->
+            <div class="mb-3" id="convenio-container" style="display:none;">
+                <label asp-for="ConvenioMedicoId" class="form-label">Convênio</label>
+                <select asp-for="ConvenioMedicoId" class="form-select" asp-items="ViewBag.ConvenioMedicoId">
+                    <option value="">-- Selecione o convênio --</option>
+                </select>
+                <span asp-validation-for="ConvenioMedicoId" class="text-danger"></span>
+            </div>
 
-        <div class="col-12">
-            <label asp-for="Observacoes" class="form-label"></label>
-            <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="Observacoes" class="text-danger"></span>
-        </div>
+            <!-- Paciente -->
+            <div class="mb-3">
+                <label asp-for="PacienteId" class="form-label">Paciente</label>
+                <select asp-for="PacienteId" class="form-select" asp-items="ViewBag.PacienteId">
+                    <option value="">-- Selecione o paciente --</option>
+                </select>
+                <span asp-validation-for="PacienteId" class="text-danger"></span>
+            </div>
 
-        <div class="col-12 d-flex gap-2 mt-3">
-            <button type="submit" class="btn btn-success">Salvar</button>
-            <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-        </div>
-    </form>
+            <!-- Médico -->
+            <div class="mb-3">
+                <label asp-for="MedicoId" class="form-label">Médico</label>
+                <select asp-for="MedicoId" class="form-select" asp-items="ViewBag.MedicoId">
+                    <option value="">-- Selecione o médico --</option>
+                </select>
+                <span asp-validation-for="MedicoId" class="text-danger"></span>
+            </div>
+
+            <!-- Serviço -->
+            <div class="mb-3">
+                <label asp-for="ServicoId" class="form-label">Serviço</label>
+                <select asp-for="ServicoId" class="form-select" asp-items="ViewBag.ServicoId">
+                    <option value="">-- Selecione o serviço --</option>
+                </select>
+                <span asp-validation-for="ServicoId" class="text-danger"></span>
+            </div>
+
+            <!-- Observações -->
+            <div class="mb-3">
+                <label asp-for="Observacoes" class="form-label">Observações</label>
+                <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Observacoes" class="text-danger"></span>
+            </div>
+
+            <!-- Botões -->
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">Salvar</button>
+                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+            </div>
+
+        </form>
+    </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const tipo = document.getElementById("tipoAtendimento");
+        const convenio = document.getElementById("convenio-container");
+
+        function toggleConvenio() {
+            convenio.style.display = tipo.value === "Convenio" ? "block" : "none";
+        }
+
+        tipo.addEventListener("change", toggleConvenio);
+        toggleConvenio(); // inicializa
+    </script>
 }

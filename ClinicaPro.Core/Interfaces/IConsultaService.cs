@@ -1,5 +1,6 @@
 using ClinicaPro.Core.Entities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ClinicaPro.Core.Interfaces
@@ -8,11 +9,15 @@ namespace ClinicaPro.Core.Interfaces
     {
         Task<Consulta> CriarAsync(Consulta consulta);
         Task<Consulta> AtualizarAsync(Consulta consulta);
-        Task ExcluirAsync(Guid id);
-        Task<Consulta?> BuscarPorIdAsync(Guid id);
+        Task ExcluirAsync(int id);
+        Task<Consulta?> BuscarPorIdAsync(int id);
         Task<List<Consulta>> ListarAsync();
 
-        // ✅ Novo método para o teste
-        Task<bool> VerificaConflitoHorario(int medicoId, DateTime dataHora);
+        // ✅ agora tudo em INT
+        Task<bool> VerificaConflitoHorario(
+            int medicoId,
+            DateTime dataHora,
+            int? consultaId = null
+        );
     }
 }

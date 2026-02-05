@@ -4,32 +4,28 @@
     ViewData["Title"] = "Consultas";
 }
 
-@* REMOVIDO: <h2>@ViewData["Title"]</h2> - Isso tira o título grande da página. *@
-
 <div class="container-fluid mt-5">
 
-    @* Novo Bloco de Layout para o Botão (Alinhado à Esquerda, como na página de Médicos) *@
+    <!-- Botão Nova Consulta -->
     <div class="d-flex justify-content-start align-items-center mb-3"> 
         <a asp-action="Create" class="btn btn-primary">
             <i class="bi bi-calendar-plus"></i> Nova Consulta
         </a>
     </div>
 
-    @* Aplicando a classe de estilização e responsividade que você usou na página de Médicos *@
+    <!-- Tabela responsiva -->
     <div class="table-responsive shadow-sm rounded"> 
         <table class="table table-striped table-hover align-middle mb-0">
             <thead>
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.First().DataHora)</th>
                     <th>@Html.DisplayNameFor(model => model.First().Status)</th>
-                    
-                    @* CORREÇÃO CS8602 (Linha 25 e 26): Uso seguro de navegação. Embora DisplayNameFor use Expression Tree, adicionar a verificação no .cshtml pode resolver o warning. Uma alternativa é verificar no Controller. Vamos tentar simplificar aqui. * @
-                    @* Uma vez que o MediatR deve retornar a consulta com Includes, esta é a forma mais simples de resolver o warning na view: *@
-                    <th>Paciente</th> @* Removido o acesso a .Paciente.Nome para simplificar e remover warning *@
-                    <th>Médico</th> @* Removido o acesso a .Medico.Nome para simplificar e remover warning *@
-                    
+                    <th>Tipo Atendimento</th>
+                    <th>Convênio</th>
+                    <th>Paciente</th>
+                    <th>Médico</th>
                     <th>@Html.DisplayNameFor(model => model.First().Observacoes)</th>
-                    <th class="text-center">Ações</th> @* Adicionando centralização para a coluna de Ações *@
+                    <th class="text-center">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,14 +33,21 @@
                     <tr>
                         <td>@item.DataHora.ToString("g")</td>
                         <td>@item.Status</td>
-                        
-                        @* CORREÇÃO CS8602 (Linhas 36 e 37 no corpo): Usa o operador ?. para evitar desreferência nula e o ?? para um fallback (N/A) *@
+
+                        <!-- Tipo de Atendimento -->
+                        <td>@(item.ConvenioMedicoId.HasValue ? "Convênio" : "Particular")</td>
+
+                        <!-- Nome do Convênio -->
+                        <td>@(item.ConvenioMedico?.Nome ?? "-")</td>
+
+                        <!-- Paciente e Médico -->
                         <td>@(item.Paciente?.Nome ?? "N/A")</td>
                         <td>@(item.Medico?.Nome ?? "N/A")</td>
-                        
+
                         <td>@item.Observacoes</td>
+
+                        <!-- Ações -->
                         <td class="text-center">
-                            @* Ações padronizadas e com ícones *@
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1">
                                 <i class="bi bi-pencil-square"></i> Editar
                             </a>

@@ -9,23 +9,66 @@
 <div class="card shadow-sm mt-3">
     <div class="card-body">
         <dl class="row mb-0">
+
             <dt class="col-sm-3">Data e Hora</dt>
-            <dd class="col-sm-9 mb-3">@Model.DataHora.ToString("dd/MM/yyyy HH:mm")</dd>
+            <dd class="col-sm-9 mb-3">
+                @Model.DataHora.ToString("dd/MM/yyyy HH:mm")
+            </dd>
 
             <dt class="col-sm-3">Status</dt>
             <dd class="col-sm-9 mb-3">@Model.Status</dd>
 
+            <dt class="col-sm-3">Tipo de Atendimento</dt>
+            <dd class="col-sm-9 mb-3">
+                @(Model.ConvenioMedicoId.HasValue ? "Convênio" : "Particular")
+            </dd>
+
+            <dt class="col-sm-3">Convênio</dt>
+            <dd class="col-sm-9 mb-3">
+                @(Model.ConvenioMedico != null
+                    ? Model.ConvenioMedico.Nome
+                    : "-")
+            </dd>
+
             <dt class="col-sm-3">Paciente</dt>
-            <dd class="col-sm-9 mb-3">@Model.Paciente?.Nome ?? "Não cadastrado"</dd>
+            <dd class="col-sm-9 mb-3">
+                @(Model.Paciente != null
+                    ? Model.Paciente.Nome
+                    : "Não cadastrado")
+            </dd>
 
             <dt class="col-sm-3">Médico</dt>
-            <dd class="col-sm-9 mb-3">@Model.Medico?.Nome ?? "Não cadastrado"</dd>
+            <dd class="col-sm-9 mb-3">
+                @(Model.Medico != null
+                    ? Model.Medico.Nome
+                    : "Não cadastrado")
+            </dd>
+
+            <dt class="col-sm-3">Serviço</dt>
+            <dd class="col-sm-9 mb-3">
+                @(Model.Servico != null
+                    ? Model.Servico.Nome
+                    : "-")
+            </dd>
 
             <dt class="col-sm-3">Observações</dt>
-            <dd class="col-sm-9 mb-3">@Model.Observacoes</dd>
+            <dd class="col-sm-9 mb-3">
+                @(!string.IsNullOrWhiteSpace(Model.Observacoes)
+                    ? Model.Observacoes
+                    : "-")
+            </dd>
+
         </dl>
 
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">Editar</a>
-        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn btn-warning me-2">
+            Editar
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Voltar
+        </a>
     </div>
 </div>
