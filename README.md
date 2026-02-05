@@ -1,75 +1,98 @@
-# ClinicaPro
+# 🏥 ClinicaPro
 
-Sistema ERP para gestão de clínica: paciência, médicos, consultas, RH e financeiro.
+Sistema de Gestão Clínica desenvolvido em **ASP.NET Core**, com foco em **arquitetura limpa**, **boas práticas** e **modelagem de domínio real**, criado como **projeto de portfólio profissional**.
 
-## 🏥 Visão Geral
+---
 
-ClinicaPro é uma aplicação web desenvolvida em .NET 9 + ASP.NET Core + Entity Framework, que oferece:
+## 🎯 Objetivo do Projeto
 
-- Cadastro e gerenciamento de Pacientes, Médicos e Funcionários  
-- Agendamento de Consultas  
-- Módulo Financeiro: Contas a Pagar e Contas a Receber  
-- Controle de Cargos e Permissões de Acesso (Admin, RH, Recepcionista, Médico)  
-- Layout responsivo com interface tipo ERP (sidebar colapsável, menu acordeão, navegação limpa)
+O ClinicaPro foi desenvolvido para simular um sistema corporativo real de gestão clínica, abordando problemas comuns do domínio da saúde como:
 
-## 📸 Telas do Sistema
+- Agendamento e controle de consultas
+- Associação de convênios médicos
+- Gestão de pacientes e médicos
+- Organização financeira básica
+- Separação clara de responsabilidades no código
 
-### Dashboard  
-![Dashboard](images/dashboard.png)  
+O foco principal do projeto é **qualidade de código, arquitetura e regras de negócio**, e não apenas CRUD simples.
 
-### Menu RH / Funcionários  
-![RH - Funcionários](images/rh_funcionarios.png)  
+---
 
-### Financeiro  
-![Financeiro](images/financeiro.png)  
+## 🧩 Funcionalidades
 
-### Pacientes  
-![Pacientes](images/pacientes.png)  
+- ✅ Gestão de Pacientes
+- ✅ Gestão de Médicos
+- ✅ Agendamento de Consultas
+- ✅ Associação de Convênios às Consultas
+- ✅ Edição e exclusão de consultas já persistidas
+- ✅ Módulo Financeiro (Contas a Pagar / Receber / Pagamentos)
+- ✅ Gestão de Serviços
+- ✅ Controle de acesso por perfis (Admin, Recepcionista, Médico, RH)
 
-### Consultas  
-![Consultas](images/consultas.png)  
+---
 
-> **Obs:** Substitua os caminhos acima (`images/…`) pelos reais onde suas imagens estiverem no repositório.
+## 🏗️ Arquitetura e Tecnologias
 
-## 🔧 Como Rodar Localmente
+- **ASP.NET Core MVC**
+- **Clean Architecture**
+- **CQRS (Command Query Responsibility Segregation)**
+- **MediatR**
+- **Entity Framework Core**
+- **ASP.NET Identity**
+- **Validação de regras de negócio**
+- **Testes unitários**
 
-1. Clone o repositório:  
-   ```bash
-   git clone https://github.com/cremutcho/ClinicaPro.git
+---
 
-dotnet restore
-
-dotnet ef database update
-
-dotnet run --project ClinicaPro.Web
-
-🛠️ Tecnologias Usadas
-
-.NET 9 / ASP.NET Core MVC
-
-Entity Framework Core
-
-Identity (Autenticação / Autorização)
-
-Bootstrap 5 + Bootstrap Icons
-
-C# / Razor Views / HTML / CSS / JS
-
-✅ Funcionalidades já Implementadas
-
-CRUD completo para Pacientes, Médicos, Funcionários, Cargos e Consultas
-
-Controle de papéis (roles) e permissões
-
-Menu lateral colapsável e navegação por acordeão (ERP‑style)
-
-Sistema Financeiro (Contas a Pagar / Receber)
-
-
-
-Exportar relatórios em PDF / Excel
-
-Validações e segurança (input sanitization, autenticação/ autorização refinada)
+ClinicaPro
+│
+├── ClinicaPro.Core
+│ ├── Entities
+│ ├── Features (Commands / Queries)
+│ ├── Interfaces
+│ └── Services
+│
+├── ClinicaPro.Infrastructure
+│ ├── Data
+│ ├── Repositories
+│ ├── Migrations
+│ └── Persistence
+│
+├── ClinicaPro.Web
+│ ├── Controllers
+│ ├── Views
+│ └── Program.cs
+│
+└── ClinicaPro.Tests
+└── Testes de Commands e Handlers
 
 
+---
+
+## 🧠 Destaques Técnicos
+
+- Separação total entre **domínio**, **infraestrutura** e **camada web**
+- Uso de **CQRS** para separar leitura e escrita
+- Regras de negócio centralizadas nos **Services**
+- Handlers desacoplados via **MediatR**
+- Testes unitários focados em comportamento e regras
+- Modelagem de domínio baseada em cenários reais de clínicas médicas
+
+---
+
+## 🚀 Status do Projeto
+
+🟢 **Ativo e funcional**
+
+O sistema possui módulos completos e testados, sendo continuamente evoluído com foco em qualidade e escalabilidade.
+
+---
+
+## 👨‍💻 Autor
+
+Projeto desenvolvido por **Andre Correia**  
+📌 Portfólio profissional para demonstração de habilidades em backend e arquitetura de software.
+
+
+## 📁 Estrutura do Projeto
 
