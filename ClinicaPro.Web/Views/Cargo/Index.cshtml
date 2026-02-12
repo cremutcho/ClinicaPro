@@ -1,0 +1,97 @@
+@model IEnumerable<ClinicaPro.Core.Features.Cargos.Queries.CargoDto>
+
+@{
+    ViewData["Title"] = "Gestão de Cargos";
+}
+
+<!-- TÍTULO: Padrão Bootstrap com espaçamento superior (se o _Layout estiver corrigido, mt-4 é suficiente) -->
+<h1 class="mt-4 text-primary fw-bold">Gestão de Cargos</h1>
+
+<div class="container-fluid mt-4">
+
+    <!-- Mensagens Temporárias (Sucesso/Erro) -->
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Botão de Adicionar Novo Cargo -->
+    <div class="d-flex justify-content-start align-items-center mb-3">
+        <!-- Usando btn-primary e ícone do Bootstrap Icons -->
+        <a asp-action="Adicionar" class="btn btn-primary shadow-sm">
+            <i class="bi bi-person-plus-fill me-1"></i> Adicionar Novo Cargo
+        </a>
+    </div>
+
+    <!-- Tabela de Listagem de Cargos -->
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Nome)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Descricao)
+                    </th>
+                    <th scope="col" class="text-center">
+                        Ações
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-nowrap">
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td class="text-nowrap">
+                            @Html.DisplayFor(modelItem => item.Nome)
+                        </td>
+                        <td style="max-width: 350px; overflow: hidden; text-overflow: ellipsis;">
+                            @Html.DisplayFor(modelItem => item.Descricao)
+                        </td>
+                        <!-- Coluna de Ações com Botões Centralizados -->
+                        <td class="text-center d-flex justify-content-center">
+                            <!-- Botões de Ação -->
+                            <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+                            <a asp-action="Detalhes" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white me-1">
+                                <i class="bi bi-info-circle"></i> Detalhes
+                            </a>
+                            <!-- Formulário de Exclusão (Substituí o JavaScript 'confirm' por um botão direto,
+                                 pois o confirm() deve ser evitado em produção; idealmente, use um modal Bootstrap) -->
+                            <a asp-action="Deletar" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash-fill"></i> Excluir
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Mensagem de Tabela Vazia (Estilo Card/Padrão Bootstrap) -->
+        @if (!Model.Any())
+        {
+            <div class="card-footer text-center text-muted py-5">
+                <i class="bi bi-table fs-3 mb-2 d-block"></i>
+                <p class="mb-0">Nenhum cargo cadastrado. Use o botão acima para adicionar um novo.</p>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,48 @@
+@model ClinicaPro.Core.Features.Cargos.Commands.AtualizarCargoCommand
+
+@{
+    ViewData["Title"] = "Excluir Cargo";
+}
+
+<div class="card shadow-sm rounded mx-auto border-danger" style="max-width: 600px; margin-top: 100px;">
+    <div class="card-body">
+        
+        <h1 class="card-title text-danger fw-bold border-bottom pb-2 mb-4">
+            <i class="bi bi-trash"></i> @ViewData["Title"] (ID: @Model.Id)
+        </h1>
+
+        <p class="alert alert-warning">
+            Tem certeza que deseja **excluir** o cargo **"@Model.Nome"**? Esta ação é **irreversível**.
+        </p>
+
+        <dl class="row mb-4">
+            
+            <dt class="col-sm-4 fw-bold">Nome do Cargo:</dt>
+            <dd class="col-sm-8 text-danger fw-bold">@Html.DisplayFor(model => model.Nome)</dd>
+            
+            <hr class="mt-2 mb-2"/>
+
+            <dt class="col-sm-4 fw-bold">Descrição:</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Descricao)</dd>
+            
+        </dl>
+        
+        <form asp-action="Deletar" method="post">
+            @Html.AntiForgeryToken()
+            
+            @Html.HiddenFor(model => model.Id)
+            
+            <div class="d-flex justify-content-between pt-3 border-top">
+                
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+                
+                <button type="submit" class="btn btn-danger shadow-sm">
+                    <i class="bi bi-trash"></i> Confirmar Exclusão
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>

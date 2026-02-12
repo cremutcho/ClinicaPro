@@ -12,8 +12,6 @@ using ClinicaPro.Core.Entities; // Para as entidades Medico, Consulta, etc.
 
 // Usings necessários para referenciar as Queries e Handlers (Core Assembly)
 using ClinicaPro.Core.Features.Consultas.Queries; 
-// O using problemático foi removido: using ClinicaPro.Core.Features.Medicos.Entities; 
-// Se precisar referenciar a entidade Medico, ClinicaPro.Core.Entities é o mais provável.
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +40,10 @@ builder.Services.AddScoped<IEspecialidadeRepository, EspecialidadeRepository>();
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
 builder.Services.AddScoped<IConsultaRepository, ConsultaRepository>();
 builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
+
+// 🆕 ADIÇÃO DO MÓDULO RH (Cargo e Departamento)
+builder.Services.AddScoped<ICargoRepository, CargoRepository>();
+builder.Services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
 // ----------------------------------------------------------------------
 // 🔹 MediatR (CQRS) - Registro de Handlers
 builder.Services.AddMediatR(cfg => 

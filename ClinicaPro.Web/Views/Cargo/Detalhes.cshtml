@@ -1,0 +1,44 @@
+@model ClinicaPro.Core.Features.Cargos.Commands.AtualizarCargoCommand
+
+@{
+    ViewData["Title"] = "Detalhes do Cargo";
+}
+
+<div class="card shadow-sm rounded mx-auto" style="max-width: 600px; margin-top: 100px;">
+    <div class="card-body">
+        
+        <h1 class="card-title text-info fw-bold border-bottom pb-2 mb-4">@ViewData["Title"] (ID: @Model.Id)</h1>
+
+        <dl class="row">
+            
+            <dt class="col-sm-4 fw-bold">ID:</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Id)</dd>
+            
+            <hr class="mt-2 mb-2"/>
+
+            <dt class="col-sm-4 fw-bold">Nome do Cargo:</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Nome)</dd>
+            
+            <hr class="mt-2 mb-2"/>
+
+            <dt class="col-sm-4 fw-bold">Descrição:</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Descricao)</dd>
+
+        </dl>
+
+        <div class="d-flex justify-content-between pt-3 border-top mt-4">
+            
+            <a asp-action="Index" class="btn btn-link text-secondary p-0">
+                <i class="bi bi-arrow-left"></i> Voltar para a Lista
+            </a>
+            
+            <a asp-action="Editar" asp-route-id="@Model.Id" class="btn btn-outline-primary shadow-sm">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            
+        </div>
+
+    </div>
+</div>
+
+@* Não precisa da seção Scripts para validação, pois não há formulário *@

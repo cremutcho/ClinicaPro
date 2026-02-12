@@ -22,12 +22,6 @@ namespace ClinicaPro.Infrastructure.Repositories
                                  .ToListAsync();
         }
 
-        // ✅ MÉTODO ADICIONADO PARA RESOLVER O ERRO CS0535
-        /// <summary>
-        /// Verifica se um funcionário com o CPF fornecido já existe no banco de dados.
-        /// </summary>
-        /// <param name="cpf">O CPF a ser verificado.</param>
-        /// <returns>True se o CPF já existir, False caso contrário.</returns>
         public async Task<bool> ExisteCpfAsync(string cpf)
         {
             // O acesso é feito através da coleção DbSet (Funcionarios) ou do _context.Set<Funcionario>()
