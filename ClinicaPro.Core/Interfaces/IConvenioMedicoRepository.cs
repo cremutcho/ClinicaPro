@@ -12,5 +12,9 @@ namespace ClinicaPro.Core.Interfaces
         Task DeleteAsync(Guid id);
         Task<ConvenioMedico?> GetByIdAsync(Guid id);
         Task<List<ConvenioMedico>> GetAllAsync();
+
+        Task<bool> ExistsByNameAsync(string nome);
+        Task<bool> ExistsByNameExceptIdAsync(string nome, Guid id);
+
     }
 }

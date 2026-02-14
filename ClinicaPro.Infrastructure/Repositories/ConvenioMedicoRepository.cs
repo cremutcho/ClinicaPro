@@ -1,6 +1,6 @@
 using ClinicaPro.Core.Entities;
 using ClinicaPro.Core.Interfaces;
-using ClinicaPro.Infrastructure.Data; // necessário para ClinicaDbContext
+using ClinicaPro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace ClinicaPro.Infrastructure.Repositories
         public ConvenioMedicoRepository(ClinicaDbContext context)
         {
             _context = context;
-            _dbSet = _context.ConveniosMedicos; // referência direta à DbSet do DbContext
+            _dbSet = _context.ConveniosMedicos;
         }
 
         // =========================
@@ -24,7 +24,7 @@ namespace ClinicaPro.Infrastructure.Repositories
         // =========================
         public async Task<ConvenioMedico> AddAsync(ConvenioMedico entity)
         {
-            _dbSet.Add(entity);
+            await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
@@ -34,17 +34,16 @@ namespace ClinicaPro.Infrastructure.Repositories
         // =========================
         public async Task<ConvenioMedico?> GetByIdAsync(Guid id)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<List<ConvenioMedico>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
-        }
-
-        public async Task<ConvenioMedico?> GetByNomeAsync(string nome)
-        {
-            return await _dbSet.FirstOrDefaultAsync(c => c.Nome == nome);
+            return await _dbSet
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         // =========================
@@ -68,6 +67,21 @@ namespace ClinicaPro.Infrastructure.Repositories
                 _dbSet.Remove(entity);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        // =========================
+        // VALIDATIONS
+        // =========================
+        public async Task<bool> ExistsByNameAsync(string nome)
+        {
+            return await _dbSet
+                .AnyAsync(c => c.Nome.ToUpper() == nome.ToUpper());
+        }
+
+        public async Task<bool> ExistsByNameExceptIdAsync(string nome, Guid id)
+        {
+            return await _dbSet
+                .AnyAsync(c => c.Nome.ToUpper() == nome.ToUpper() && c.Id != id);
         }
     }
 }

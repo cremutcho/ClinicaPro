@@ -6,7 +6,6 @@
 
 <div class="container-fluid mt-5">
 
-    @* Revertendo para justificar o conteúdo no início (start), que é o lado esquerdo *@
     <div class="d-flex justify-content-start align-items-center mb-3"> 
         <a asp-action="Create" class="btn btn-primary">
             <i class="bi bi-person-plus"></i> Novo Médico
@@ -31,11 +30,7 @@
                     <tr>
                         <td>@Html.DisplayFor(modelItem => item.Nome)</td>
                         <td>@Html.DisplayFor(modelItem => item.CRM)</td>
-                        
-                        @* CORREÇÃO APLICADA AQUI: Usando o DisplayFor para garantir a renderização correta.
-                           Se o item.Especialidade for NULO (embora não devesse ser), mostrará "Nenhuma". *@
                         <td>@(item.Especialidade?.Nome ?? "Nenhuma")</td>
-                        
                         <td>@Html.DisplayFor(modelItem => item.Email)</td>
                         <td>@Html.DisplayFor(modelItem => item.Telefone)</td>
                         <td class="text-center">
@@ -56,3 +51,30 @@
     </div>
 
 </div>
+
+<style>
+    /* Aproxima horizontalmente todas as colunas */
+    .table td, .table th {
+        padding-left: 0.25rem;  
+        padding-right: 0.25rem; 
+        vertical-align: middle; 
+    }
+
+    /* Coluna de ações mais próxima da coluna anterior */
+    .table td.text-center {
+        padding-left: 0.15rem; 
+        padding-right: 0.15rem; 
+    }
+
+    /* Botões de ações com pequena distância entre eles */
+    .table td.text-center .btn {
+        margin-right: 0.2rem; 
+    }
+
+    /* Mantém padrão do botão primário */
+    .btn-primary {
+        color: #fff;
+        background-color: #1b6ec2;
+        border-color: #1861ac;
+    }
+</style>

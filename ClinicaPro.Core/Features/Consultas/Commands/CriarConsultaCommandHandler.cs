@@ -1,23 +1,40 @@
-using ClinicaPro.Core.Entities;
-using ClinicaPro.Core.Interfaces;
-using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ClinicaPro.Core.Interfaces;
+using MediatR;
 
 namespace ClinicaPro.Core.Features.Consultas.Commands
 {
-    public class CriarConsultaCommandHandler : IRequestHandler<CriarConsultaCommand, Unit>
+    public class CriarConsultaCommandHandler 
+        : IRequestHandler<CriarConsultaCommand, Unit>
     {
-        private readonly IConsultaService _consultaService;
+        private readonly IConsultaService _service;
 
-        public CriarConsultaCommandHandler(IConsultaService consultaService)
+        public CriarConsultaCommandHandler(IConsultaService service)
         {
-            _consultaService = consultaService;
+            _service = service;
         }
 
-        public async Task<Unit> Handle(CriarConsultaCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(
+            CriarConsultaCommand request,
+            CancellationToken cancellationToken)
         {
-            await _consultaService.CriarAsync(request.Consulta);
+            var consulta = request.Consulta;
+
+            var conflito = await _service.VerificaConflitoHorario(
+                consulta.MedicoId,
+                consulta.DataHora,
+                null
+            );
+
+            if (conflito)
+                throw new InvalidOperationException(
+                    "Já existe uma consulta para este médico nesse horário."
+                );
+
+            await _service.CriarAsync(consulta);
+
             return Unit.Value;
         }
     }

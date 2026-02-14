@@ -9,9 +9,9 @@ namespace ClinicaPro.Core.Services
 {
     public class ConsultaService : IConsultaService
     {
-        private readonly IRepository<Consulta, int> _consultaRepository;
+        private readonly IConsultaRepository _consultaRepository;
 
-        public ConsultaService(IRepository<Consulta, int> consultaRepository)
+        public ConsultaService(IConsultaRepository consultaRepository)
         {
             _consultaRepository = consultaRepository;
         }
@@ -23,27 +23,29 @@ namespace ClinicaPro.Core.Services
         {
             var conflito = await VerificaConflitoHorario(
                 consulta.MedicoId,
-                consulta.DataHora
+                consulta.DataHora,
+                null
             );
 
             if (conflito)
                 throw new InvalidOperationException(
-                    "Conflito de horário: O médico já tem uma consulta neste horário."
+                    "Já existe uma consulta para este médico nesse horário."
                 );
 
             await _consultaRepository.AddAsync(consulta);
+
             return consulta;
         }
 
         // =========================
-        // UPDATE (🔥 AQUI ESTÁ A CORREÇÃO)
+        // UPDATE
         // =========================
         public async Task<Consulta> AtualizarAsync(Consulta consulta)
         {
             var conflito = await VerificaConflitoHorario(
                 consulta.MedicoId,
                 consulta.DataHora,
-                consulta.Id   // 👈 IGNORA A PRÓPRIA CONSULTA
+                consulta.Id
             );
 
             if (conflito)
@@ -52,6 +54,7 @@ namespace ClinicaPro.Core.Services
                 );
 
             await _consultaRepository.UpdateAsync(consulta);
+
             return consulta;
         }
 
@@ -72,21 +75,20 @@ namespace ClinicaPro.Core.Services
         }
 
         // =========================
-        // REGRA DE CONFLITO (FINAL)
+        // REGRA DE CONFLITO (AGORA OTIMIZADA)
         // =========================
         public async Task<bool> VerificaConflitoHorario(
             int medicoId,
             DateTime dataHora,
-            int? consultaId = null
+            int? consultaId
         )
         {
-            var todas = await _consultaRepository.GetAllAsync();
-
-            return todas.Any(c =>
-                c.MedicoId == medicoId &&
-                c.DataHora == dataHora &&
-                (!consultaId.HasValue || c.Id != consultaId.Value)
-            );
+            return await _consultaRepository
+                .ExisteConsultaNoHorarioAsync(
+                    medicoId,
+                    dataHora,
+                    consultaId
+                );
         }
     }
 }

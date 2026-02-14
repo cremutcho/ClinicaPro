@@ -9,14 +9,17 @@ using System;
 
 namespace ClinicaPro.Infrastructure.Repositories
 {
-    // A classe herda de Repository<Consulta, int> e implementa IConsultaRepository
-    public class ConsultaRepository : Repository<Consulta, int>, IConsultaRepository
+    public class ConsultaRepository 
+        : Repository<Consulta, int>, IConsultaRepository
     {
-        public ConsultaRepository(ClinicaDbContext context) : base(context)
+        public ConsultaRepository(ClinicaDbContext context) 
+            : base(context)
         {
         }
 
-        // ✅ 1. GetAllAsync – usado na listagem
+        // =========================
+        // LISTAGEM COMPLETA
+        // =========================
         public override async Task<IEnumerable<Consulta>> GetAllAsync()
         {
             return await _dbSet
@@ -27,7 +30,9 @@ namespace ClinicaPro.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // ✅ 2. GetByIdAsync – ESSENCIAL para Details / Edit
+        // =========================
+        // BUSCAR POR ID
+        // =========================
         public override async Task<Consulta?> GetByIdAsync(int id)
         {
             return await _dbSet
@@ -38,7 +43,9 @@ namespace ClinicaPro.Infrastructure.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        // ✅ 3. Consultas por médico
+        // =========================
+        // CONSULTAS POR MÉDICO
+        // =========================
         public async Task<IEnumerable<Consulta>> GetByMedicoAsync(int medicoId)
         {
             return await _dbSet
@@ -50,7 +57,9 @@ namespace ClinicaPro.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // ✅ 4. Consultas por paciente
+        // =========================
+        // CONSULTAS POR PACIENTE
+        // =========================
         public async Task<IEnumerable<Consulta>> GetByPacienteAsync(int pacienteId)
         {
             return await _dbSet
@@ -62,11 +71,20 @@ namespace ClinicaPro.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // ✅ 5. Regra de conflito de horário
-        public async Task<bool> VerificaConflitoHorario(int medicoId, DateTime dataHora)
+        // =========================
+        // VERIFICAÇÃO OTIMIZADA NO BANCO
+        // =========================
+        public async Task<bool> ExisteConsultaNoHorarioAsync(
+            int medicoId,
+            DateTime dataHora,
+            int? consultaId
+        )
         {
-            return await _dbSet
-                .AnyAsync(c => c.MedicoId == medicoId && c.DataHora == dataHora);
+            return await _dbSet.AnyAsync(c =>
+                c.MedicoId == medicoId &&
+                c.DataHora == dataHora &&
+                (!consultaId.HasValue || c.Id != consultaId.Value)
+            );
         }
     }
 }

@@ -26,6 +26,8 @@ namespace ClinicaPro.Infrastructure.Data
         public DbSet<Servico> Servicos { get; set; } = null!;
         public DbSet<ConvenioMedico> ConveniosMedicos { get; set; } = null!;
 
+        public DbSet<ConvenioMedico> Convenios { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

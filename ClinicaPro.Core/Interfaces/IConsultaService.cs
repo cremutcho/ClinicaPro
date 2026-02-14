@@ -13,11 +13,10 @@ namespace ClinicaPro.Core.Interfaces
         Task<Consulta?> BuscarPorIdAsync(int id);
         Task<List<Consulta>> ListarAsync();
 
-        // ✅ agora tudo em INT
         Task<bool> VerificaConflitoHorario(
             int medicoId,
             DateTime dataHora,
-            int? consultaId = null
+            int? consultaId
         );
     }
 }

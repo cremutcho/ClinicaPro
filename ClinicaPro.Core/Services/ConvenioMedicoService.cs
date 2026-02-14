@@ -1,4 +1,5 @@
 using ClinicaPro.Core.Entities;
+using ClinicaPro.Core.Exceptions;
 using ClinicaPro.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,19 @@ namespace ClinicaPro.Core.Services
         // =========================
         public async Task<ConvenioMedico> CriarAsync(ConvenioMedico convenio)
         {
+            if (convenio == null)
+                throw new BusinessException("Convênio inválido.");
+
+            var nomeNormalizado = convenio.Nome?.Trim();
+
+            if (string.IsNullOrWhiteSpace(nomeNormalizado))
+                throw new BusinessException("O nome do convênio é obrigatório.");
+
+            if (await _repository.ExistsByNameAsync(nomeNormalizado))
+                throw new BusinessException("Já existe um convênio com esse nome.");
+
+            convenio.Nome = nomeNormalizado;
+
             return await _repository.AddAsync(convenio);
         }
 
@@ -28,7 +42,7 @@ namespace ClinicaPro.Core.Services
         // =========================
         public async Task<List<ConvenioMedico>> ListarAsync()
         {
-            return await _repository.GetAllAsync(); // Retorno agora é List<ConvenioMedico>
+            return await _repository.GetAllAsync();
         }
 
         public async Task<ConvenioMedico?> BuscarPorIdAsync(Guid id)
@@ -41,6 +55,19 @@ namespace ClinicaPro.Core.Services
         // =========================
         public async Task<ConvenioMedico> AtualizarAsync(ConvenioMedico convenio)
         {
+            if (convenio == null)
+                throw new BusinessException("Convênio inválido.");
+
+            var nomeNormalizado = convenio.Nome?.Trim();
+
+            if (string.IsNullOrWhiteSpace(nomeNormalizado))
+                throw new BusinessException("O nome do convênio é obrigatório.");
+
+            if (await _repository.ExistsByNameExceptIdAsync(nomeNormalizado, convenio.Id))
+                throw new BusinessException("Já existe outro convênio com esse nome.");
+
+            convenio.Nome = nomeNormalizado;
+
             return await _repository.UpdateAsync(convenio);
         }
 

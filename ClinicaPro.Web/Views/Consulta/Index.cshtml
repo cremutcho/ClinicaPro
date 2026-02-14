@@ -33,20 +33,11 @@
                     <tr>
                         <td>@item.DataHora.ToString("g")</td>
                         <td>@item.Status</td>
-
-                        <!-- Tipo de Atendimento -->
                         <td>@(item.ConvenioMedicoId.HasValue ? "Convênio" : "Particular")</td>
-
-                        <!-- Nome do Convênio -->
                         <td>@(item.ConvenioMedico?.Nome ?? "-")</td>
-
-                        <!-- Paciente e Médico -->
                         <td>@(item.Paciente?.Nome ?? "N/A")</td>
                         <td>@(item.Medico?.Nome ?? "N/A")</td>
-
                         <td>@item.Observacoes</td>
-
-                        <!-- Ações -->
                         <td class="text-center">
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1">
                                 <i class="bi bi-pencil-square"></i> Editar
@@ -64,3 +55,30 @@
         </table>
     </div>
 </div>
+
+<style>
+    /* Aproxima horizontalmente todas as colunas da tabela */
+    .table td, .table th {
+        padding-left: 0.25rem;  
+        padding-right: 0.25rem; 
+        vertical-align: middle; 
+    }
+
+    /* Coluna de ações mais próxima da coluna anterior */
+    .table td.text-center {
+        padding-left: 0.15rem; 
+        padding-right: 0.15rem; 
+    }
+
+    /* Botões de ações com pequena distância entre eles */
+    .table td.text-center .btn {
+        margin-right: 0.2rem; 
+    }
+
+    /* Botão Novo Consulta padrão */
+    .btn-primary {
+        color: #fff;
+        background-color: #1b6ec2;
+        border-color: #1861ac;
+    }
+</style>
