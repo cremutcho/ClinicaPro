@@ -4,7 +4,7 @@ WORKDIR /src
 
 COPY . .
 RUN dotnet restore
-RUN dotnet publish ./ClinicaPro.Api -c Release -o /app/publish
+RUN dotnet publish ./ClinicaPro.Web -c Release -o /app/publish
 
 # Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
@@ -12,4 +12,4 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
-ENTRYPOINT ["dotnet", "ClinicaPro.Api.dll"]
+ENTRYPOINT ["dotnet", "ClinicaPro.Web.dll"]

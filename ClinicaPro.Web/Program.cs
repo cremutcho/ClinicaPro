@@ -12,6 +12,9 @@ using ClinicaPro.Core.Features.ConvenioMedico.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 🔥 PORTA OBRIGATÓRIA PARA O RENDER
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
+
 // 🔹 Conexão com SQLite
 builder.Services.AddDbContext<ClinicaDbContext>(options =>
     options.UseSqlite("Data Source=clinicapro.db"));
@@ -65,12 +68,11 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// 🔥 CRIA BANCO AUTOMATICAMENTE (SEM QUEBRAR MIGRATION)
+// 🔥 CRIA BANCO AUTOMATICAMENTE + APLICA MIGRATIONS
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ClinicaDbContext>();
 
-    // 👇 ISSO EVITA O ERRO QUE VOCÊ TEVE
     if (db.Database.GetPendingMigrations().Any())
     {
         db.Database.Migrate();
@@ -82,9 +84,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection(); // 🔥 corrigido para produção
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
@@ -98,7 +100,7 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
-// 🔹 Seed de roles e usuários
+// 🔹 Seed de roles e usuário admin
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
