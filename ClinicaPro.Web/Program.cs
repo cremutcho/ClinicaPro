@@ -12,9 +12,9 @@ using ClinicaPro.Core.Features.ConvenioMedico.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔹 Conexão com o banco de dados
+// 🔹 Conexão com SQLite
 builder.Services.AddDbContext<ClinicaDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=clinicapro.db"));
 
 // 🔹 Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
@@ -28,15 +28,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 // 🔹 INJEÇÃO DE DEPENDÊNCIA
 // =================================================================
 
-// =========================
-// Repositórios Genéricos
-// =========================
+// Repositórios genéricos
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-// =========================
-// Repositórios Específicos
-// =========================
+// Repositórios específicos
 builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
 builder.Services.AddScoped<IEspecialidadeRepository, EspecialidadeRepository>();
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
@@ -49,34 +45,37 @@ builder.Services.AddScoped<IPagamentoRepository, PagamentoRepository>();
 builder.Services.AddScoped<IServicoRepository, ServicoRepository>();
 builder.Services.AddScoped<IConvenioMedicoRepository, ConvenioMedicoRepository>();
 
-// =========================
 // Services
-// =========================
 builder.Services.AddScoped<IPacienteService, PacienteService>();
 builder.Services.AddScoped<IMedicoService, MedicoService>();
 builder.Services.AddScoped<IConsultaService, ConsultaService>();
 builder.Services.AddScoped<IConvenioMedicoService, ConvenioMedicoService>();
 
-// =========================
-// MediatR (CQRS) - REGISTRA HANDLERS
-// =========================
+// MediatR
 builder.Services.AddMediatR(cfg =>
 {
-    // Registrando todos os Handlers do assembly de ConvenioMedico
     cfg.RegisterServicesFromAssembly(typeof(CriarConvenioMedicoCommandHandler).Assembly);
 });
 
-// =========================
 // Validações
-// =========================
 builder.Services.AddValidatorsFromAssembly(typeof(CriarConvenioMedicoCommandValidator).Assembly);
 
-// =========================
 // MVC
-// =========================
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// 🔥 CRIA BANCO AUTOMATICAMENTE (SEM QUEBRAR MIGRATION)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ClinicaDbContext>();
+
+    // 👇 ISSO EVITA O ERRO QUE VOCÊ TEVE
+    if (db.Database.GetPendingMigrations().Any())
+    {
+        db.Database.Migrate();
+    }
+}
 
 // 🔹 Pipeline HTTP
 if (!app.Environment.IsDevelopment())
@@ -88,6 +87,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -129,6 +129,7 @@ using (var scope = app.Services.CreateScope())
             };
 
             var result = await userManager.CreateAsync(adminUser, adminPass);
+
             if (result.Succeeded)
                 await userManager.AddToRoleAsync(adminUser, "Admin");
         }

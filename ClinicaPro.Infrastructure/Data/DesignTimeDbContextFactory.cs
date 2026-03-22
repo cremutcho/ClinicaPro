@@ -4,14 +4,15 @@ using Microsoft.EntityFrameworkCore.Design;
 namespace ClinicaPro.Infrastructure.Data
 {
     public class ClinicaDbContextFactory : IDesignTimeDbContextFactory<ClinicaDbContext>
-{
-    public ClinicaDbContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ClinicaDbContext>();
-        optionsBuilder.UseSqlServer(
-            "Server=DESKTOP-HP0L5QF\\MSSQLSERVER01;Database=ClinicaProDb;Trusted_Connection=True;TrustServerCertificate=True;");
+        public ClinicaDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ClinicaDbContext>();
 
-        return new ClinicaDbContext(optionsBuilder.Options);
+            // 🔥 AGORA USANDO SQLITE
+            optionsBuilder.UseSqlite("Data Source=clinicapro.db");
+
+            return new ClinicaDbContext(optionsBuilder.Options);
+        }
     }
-}
 }

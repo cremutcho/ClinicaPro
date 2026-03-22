@@ -24,9 +24,7 @@ namespace ClinicaPro.Infrastructure.Data
         public DbSet<ContaReceber> ContasReceber { get; set; } = null!;
         public DbSet<Pagamento> Pagamentos { get; set; } = null!;
         public DbSet<Servico> Servicos { get; set; } = null!;
-        public DbSet<ConvenioMedico> ConveniosMedicos { get; set; } = null!;
-
-        public DbSet<ConvenioMedico> Convenios { get; set; }
+        public DbSet<ConvenioMedico> ConveniosMedicos { get; set; } = null!; // ✅ CORRETO (removi duplicado)
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +32,9 @@ namespace ClinicaPro.Infrastructure.Data
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ClinicaDbContext).Assembly);
 
-            // Índices e relacionamentos
+            // =========================
+            // Índices
+            // =========================
             modelBuilder.Entity<Paciente>()
                 .HasIndex(p => p.CPF)
                 .IsUnique();
@@ -43,6 +43,9 @@ namespace ClinicaPro.Infrastructure.Data
                 .HasIndex(m => m.CRM)
                 .IsUnique();
 
+            // =========================
+            // Relacionamentos
+            // =========================
             modelBuilder.Entity<Prontuario>()
                 .HasOne(p => p.Paciente)
                 .WithOne(pac => pac.Prontuario)
@@ -58,31 +61,30 @@ namespace ClinicaPro.Infrastructure.Data
                 .WithMany(m => m.Consultas)
                 .HasForeignKey(c => c.MedicoId);
 
+            // =========================
+            // ⚠️ IMPORTANTE PARA SQLITE
+            // =========================
 
-
-            // =========================================================
-            // 🔧 Correções MÍNIMAS dos warnings dos campos decimal
-            // =========================================================
-
+            // SQLite NÃO SUPORTA decimal com precisão → converter para double
             modelBuilder.Entity<Cargo>()
                 .Property(c => c.Salario)
-                .HasPrecision(18, 2);
+                .HasConversion<double>();
 
             modelBuilder.Entity<ContaPagar>()
                 .Property(c => c.Valor)
-                .HasPrecision(18, 2);
+                .HasConversion<double>();
 
             modelBuilder.Entity<ContaReceber>()
                 .Property(c => c.Valor)
-                .HasPrecision(18, 2);
+                .HasConversion<double>();
 
             modelBuilder.Entity<Pagamento>()
                 .Property(p => p.Valor)
-                .HasPrecision(18, 2);
+                .HasConversion<double>();
 
             modelBuilder.Entity<Servico>()
                 .Property(s => s.ValorPadrao)
-                .HasPrecision(18, 2);
+                .HasConversion<double>();
         }
     }
 }
