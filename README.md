@@ -2,9 +2,15 @@
 
 Sistema completo de gestão para clínicas médicas, desenvolvido com foco em boas práticas de arquitetura, escalabilidade e organização de código.
 
+🌐 Aplicação Online
+
+👉 https://clinicapro-app.onrender.com/
+
+💡 A aplicação está totalmente funcional em produção, permitindo navegação completa pelo sistema.
+
 📚 Sobre o Projeto
 
-O ClinicaPro é uma aplicação backend construída em .NET que simula um ambiente real de gerenciamento clínico, permitindo o controle de:
+O ClinicaPro é uma aplicação desenvolvida em .NET que simula um ambiente real de gerenciamento clínico, permitindo o controle de:
 
 👨‍⚕️ Médicos
 🧑‍🤝‍🧑 Pacientes
@@ -16,20 +22,19 @@ O ClinicaPro é uma aplicação backend construída em .NET que simula um ambien
 💳 Pagamentos
 🛠️ Serviços
 
-O projeto foi desenvolvido seguindo padrões modernos de arquitetura utilizados no mercado, visando alta manutenibilidade e testabilidade.
+O projeto foi construído com base em padrões modernos utilizados no mercado, priorizando manutenibilidade, escalabilidade e organização.
 
 🧠 Arquitetura
 
-O sistema segue os princípios da Clean Architecture, com separação clara de responsabilidades em camadas:
+O sistema segue os princípios da Clean Architecture, com separação clara de responsabilidades:
 
 🔹 Core
 
-Responsável pelas regras de negócio da aplicação.
+Responsável pelas regras de negócio.
 
 Contém:
 
 Entidades (Domain)
-Enums
 Interfaces (Repositories e Services)
 Features organizadas por domínio (CQRS)
 Exceptions
@@ -44,10 +49,10 @@ DbContext (Entity Framework Core)
 Migrations
 Repositórios
 Configurações de entidades
-Implementações de serviços externos (ex: WhatsApp)
+Serviços externos (ex: integração com WhatsApp)
 🔹 Tests
 
-Projeto de testes unitários garantindo qualidade e confiabilidade do sistema.
+Projeto de testes unitários garantindo qualidade e confiabilidade.
 
 Contém:
 
@@ -87,9 +92,9 @@ ClinicaPro
     └── Testes unitários
 🔄 Padrão CQRS
 
-O projeto utiliza CQRS para separar responsabilidades:
+O projeto utiliza CQRS para separação de responsabilidades:
 
-Commands (Escrita)
+🟢 Commands (Escrita)
 
 Responsáveis por alterar o estado da aplicação.
 
@@ -97,8 +102,8 @@ Exemplos:
 
 CriarConsultaCommand
 AtualizarPacienteCommand
-DeletarMedicoCommand
-Queries (Leitura)
+DeleteMedicoCommand
+🔵 Queries (Leitura)
 
 Responsáveis por recuperar dados.
 
@@ -109,7 +114,7 @@ ObterConsultaPorIdQuery
 ObterTodosMedicosQuery
 🧪 Testes
 
-O projeto possui cobertura de testes unitários utilizando:
+O projeto possui testes unitários utilizando:
 
 xUnit
 Moq
@@ -121,8 +126,9 @@ Validators
 Regras de negócio
 🗄️ Banco de Dados
 Utiliza Entity Framework Core
-Migrations já configuradas
-Banco local incluído (clinicapro.db)
+Migrations configuradas
+Banco SQLite no ambiente de deploy
+SQL Server no ambiente local
 📌 Funcionalidades
 Cadastro completo de pacientes e médicos
 Agendamento e gerenciamento de consultas
@@ -133,34 +139,34 @@ Registro de pagamentos
 Organização por especialidades
 🔗 Integrações
 
-O projeto já possui base para integração com serviços externos:
+O projeto já possui integração com:
 
 📲 WhatsApp (envio de mensagens automatizadas)
 🚧 Próximos Passos
-
-Criação de API REST (Controllers + Swagger)
-
-Autenticação e autorização (JWT)
-
-Integração completa com WhatsApp
-
+Exposição completa da API REST (Swagger)
+Autenticação com JWT
 Notificações automáticas de consultas
-
-Deploy em nuvem
-
-Interface frontend (React ou Angular)
-
+Evolução para SaaS
+Integração com frontend (React ou Angular)
 💡 Objetivo
 
-O objetivo do ClinicaPro é simular um sistema real de mercado, servindo como:
+O ClinicaPro foi desenvolvido com o objetivo de:
 
-Projeto de portfólio
-Base para evolução em um SaaS
-Demonstração de boas práticas de desenvolvimento backend
+Servir como projeto de portfólio
+Demonstrar boas práticas de desenvolvimento backend
+Simular um sistema real utilizado no mercado
+Ser base para evolução em um SaaS
 👨‍💻 Autor
 
 Desenvolvido por André Cremutcho
 
 ⭐ Considerações Finais
 
-Este projeto demonstra a aplicação prática de conceitos avançados de desenvolvimento backend, com foco em organização, escalabilidade e qualidade de código.
+Este projeto demonstra a aplicação prática de conceitos avançados de desenvolvimento backend, com foco em:
+
+Arquitetura limpa
+Organização de código
+Escalabilidade
+Qualidade e testes
+
+👉 Além disso, já se encontra publicado em produção, permitindo validação prática do funcionamento do sistema.
